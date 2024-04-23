@@ -39,12 +39,15 @@ snpxTrimmed = pd.DataFrame()
 
 #Extraction du numero de sample et du rs complet
 snpxTrimmed['Sample'] = snpxTable['Sample Name'].apply(lambda x: x[:x.find('-', x.find('-') + 1)])
-snpxTrimmed['variant'] = snpxTable['variant']
+snpxTrimmed['Variant'] = snpxTable['variant']
 
 #Ordonner les nouveaux tableaux par sample et par rs
-merge_snp_trimmed.sort_values(['Sample, variant'])
-snpxTrimmed.sort_values(['Sample, Variant'])
+merge_snp_trimmed.sort_values(['Sample', 'Variant'])
+snpxTrimmed.sort_values(['Sample', 'Variant'])
 
 print(snpxTrimmed)
 print(merge_snp_trimmed)
+
+merge_snp_grouped = merge_snp_trimmed.groupby(['Sample'])
+print(merge_snp_grouped)
 
