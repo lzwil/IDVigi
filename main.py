@@ -42,12 +42,9 @@ snpxTrimmed['Sample'] = snpxTable['Sample Name'].apply(lambda x: x[:x.find('-', 
 snpxTrimmed['Variant'] = snpxTable['variant']
 
 #Ordonner les nouveaux tableaux par sample et par rs
-merge_snp_trimmed.sort_values(['Sample', 'Variant'])
-snpxTrimmed.sort_values(['Sample', 'Variant'])
+merge_snp_trimmed.sort_values(['Sample'])
+snpxTrimmed.sort_values(['Sample'])
 
 print(snpxTrimmed)
 print(merge_snp_trimmed)
-
-merge_snp_grouped = merge_snp_trimmed.groupby(['Sample'])
-print(merge_snp_grouped)
 
