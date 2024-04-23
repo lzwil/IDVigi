@@ -41,10 +41,10 @@ snpxTrimmed = pd.DataFrame()
 snpxTrimmed['Sample'] = snpxTable['Sample Name'].apply(lambda x: x[:x.find('-', x.find('-') + 1)])
 snpxTrimmed['Variant'] = snpxTable['variant']
 
-#Ordonner les nouveaux tableaux par sample et par rs
-merge_snp_trimmed.sort_values(['Sample'])
-snpxTrimmed.sort_values(['Sample'])
 
-print(snpxTrimmed)
+#Ordonner les nouveaux tableaux par sample et par rs
+merge_snp_trimmed.sort_values(['Sample', 'Variant'], inplace=True)
+snpxTrimmed.sort_values(['Sample', 'Variant'], inplace=True)
 print(merge_snp_trimmed)
+print(snpxTrimmed)
 
