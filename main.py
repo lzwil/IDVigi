@@ -109,7 +109,6 @@ result_data = []
 for index_1, row_1 in snpxGrouped.iterrows():
     sample_1 = row_1['Sample']
     variants_1 = row_1['Variant']
-
     # Initialize a dictionary to store intersection counts for current sample pair
     result_row = {'Sample_1': sample_1}
 
@@ -129,7 +128,7 @@ for index_1, row_1 in snpxGrouped.iterrows():
 
 # Create the DataFrame using pd.DataFrame()
 result_df = pd.DataFrame(result_data)
-
+print(result_df)
 # Apply background gradient styling directly to the DataFrame
 styled_df = result_df.style.background_gradient()
 
