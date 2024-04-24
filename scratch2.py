@@ -133,8 +133,5 @@ for index_1, row_1 in snpxGrouped.iterrows():
 # Create the DataFrame using pd.DataFrame()
 result_df = pd.DataFrame(result_data)
 
-# Apply background gradient styling directly to the DataFrame
-styled_df = result_df.style.background_gradient()
-
-# Render the styled DataFrame as HTML and save it to a file
-html = styled_df.to_html("styled_table.html", index=False)
+# Display the result
+print(result_df)
