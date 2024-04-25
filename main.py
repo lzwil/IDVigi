@@ -35,7 +35,7 @@ snpxTable['variant'] = snpxTable['Marker Name'] + np.where(snpxTable['Allele 1']
                                                        snpxTable['Allele 1'],
                                                        snpxTable['Allele 1'] + snpxTable['Allele 2'])
 
-#Creation du nouveau tableau
+#Creation du nouveau tableau snpx
 snpxTrimmed = pd.DataFrame()
 
 #Extraction du numero de sample et du rs complet
@@ -46,90 +46,41 @@ snpxTrimmed['Variant'] = snpxTable['variant']
 #Ordonner les nouveaux tableaux par sample et par rs
 mergeSnpTrimmed.sort_values(['Sample', 'Variant'], inplace=True)
 snpxTrimmed.sort_values(['Sample', 'Variant'], inplace=True, ignore_index=True)
-#print(mergeSnpTrimmed)
 
 
-# #Concaténer Sample et rs pour réaliser la première matrice
-# mergeSnpTrimmed['SampleVar'] = mergeSnpTrimmed['Sample'] + mergeSnpTrimmed['Variant']
-# snpxTrimmed['SampleVar'] = snpxTrimmed['Sample'] + snpxTrimmed['Variant']
-#
-#
-# #Créer la matrice de corrélation:
-# def variant_cor(df1, df2, col1, col2):
-#     # Convertir les colonnes en liste
-#     list1 = df1[col1].tolist()
-#     list2 = df2[col2].tolist()
-#
-#     # Initialiser la matrice à 0
-#     matrix = [[0 for _ in range(len(list2))] for _ in range(len(list1))]
-#
-#     # Comparer chaque élément des listes
-#     for i in range(len(list1)):
-#         for j in range(len(list2)):
-#             # Si les chaines de caractère sont les mêmes, élément de la matrice = 1
-#             if list1[i] == list2[j]:
-#                 matrix[i][j] = 1
-#
-#     # Définir le header de la matrice
-#     headers1 = df1[col1].tolist()
-#     headers2 = df2[col2].tolist()
-#
-#     return matrix, headers1, headers2
-#
-# #Application de la fonction
-# cor_matrix, headers1, headers2 = variant_cor(mergeSnpTrimmed, snpxTrimmed, 'SampleVar', 'SampleVar')
-#
-# # Afficher le header
-# print("\t", end="")
-# for header in headers2:
-#     print(header, end="\t")
-# print()
-#
-# # Afficher la matrice
-# for i in range(len(cor_matrix)):
-#     print(headers1[i], end="\t")
-#     for j in range(len(cor_matrix[i])):
-#         print(cor_matrix[i][j], end="\t")
-#     print()
-#
-# dataframeMatrix = pd.DataFrame(cor_matrix)
-# print(dataframeMatrix)
-# corr = dataframeMatrix.corr()
-# sns.heatmap(corr, cmap='coolwarm', annot=True, linewidths=0.9)
-# plt.show()
-
-# Group variants by sample in each table
+# Grouper les variants par sample dans chaque table
 snpxGrouped = snpxTrimmed.groupby('Sample')['Variant'].apply(set).reset_index()
 mergeSnpGrouped = mergeSnpTrimmed.groupby('Sample')['Variant'].apply(set).reset_index()
 
-# Initialize an empty list to store the dictionaries
+# Initialiser une liste vide pour stocker les dictionnaires
 result_data = []
 
-# Compare each sample in snpxGrouped with each sample in mergeSnpGrouped
+# Comparer chaque sample de snpxGrouped avec chaque sample de mergeSnpGrouped
 for index_1, row_1 in snpxGrouped.iterrows():
     sample_1 = row_1['Sample']
     variants_1 = row_1['Variant']
-    # Initialize a dictionary to store intersection counts for current sample pair
+    # Initialiser un dictionnaire
     result_row = {'Sample_1': sample_1}
 
-    # Iterate over rows of mergeSnpGrouped to find intersections with the current sample
+    # Itérer sur les lignes de mergeSnpGrouped pour trouver le nombre d'intersection avec le sample actuel de snpxGrouped
     for index_2, row_2 in mergeSnpGrouped.iterrows():
         sample_2 = row_2['Sample']
         variants_2 = row_2['Variant']
 
-        # Calculate the intersection of variants between sample_1 and sample_2
+        # Calculer l'intersection de variants entre sample_1 and sample_2
         intersection_count = len(variants_1.intersection(variants_2))
 
-        # Store the intersection count for the current sample pair
+        # Stocker le nombre d'intersection de la paire de variants
         result_row[sample_2] = intersection_count
 
-    # Append the dictionary for the current sample pair to the list
+    # Ajouter au dictionnaire les intersections avec le sample de mergeSnpGrouped et tous les autres samples (on ajoute un {} au dictionnaire)
     result_data.append(result_row)
 
-# Create the DataFrame using pd.DataFrame()
+# Créer le dataframe à partir de la liste de dictionnaire
 result_df = pd.DataFrame(result_data)
 print(result_df)
-# Apply background gradient styling directly to the DataFrame
+
+# Appliquer le gradient de couleur au tableau
 styled_df = result_df.style.background_gradient()
 
 # Render the styled DataFrame as HTML and save it to a file
