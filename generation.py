@@ -1,58 +1,79 @@
 from tkinter import *
 from tkinter import filedialog
+from PIL import Image, ImageTk
 
-# Créer la fenêtre
+# Create the window
 window = Tk()
 window.title("Générateur de tableau de corrélation")
-window.geometry("720x480")
-window.iconbitmap("logo.ico")
+window.geometry("1080x720")
 window.config(background="#bfc2c7")
 
-# Créer la frame principale
+# Create the frame
 frame = Frame(window, bg="#bfc2c7")
+frame.pack(fill=BOTH, expand=YES)
 
-# Création d'image
-width = 300
-height = 300
-image = PhotoImage(file="logo.png")
-canvas = Canvas(frame, width=width, height=height, bg="#bfc2c7", bd=0, highlightthickness=0)
-canvas.create_image(width/2, height/2, image=image)
-canvas.grid(row=0, column=1, sticky=W)
+# Load the image
+logo_image = Image.open("C:/Users/leozw/PycharmProjects/IDVigi/logo.png")
 
-# Créer sous-boite
+# Calculate scaling factor to fit the image entirely within the canvas
+width, height = logo_image.size
+max_width, max_height = 600, 600  # Enlarged width and height of the canvas
+scale = min(max_width / width, max_height / height)
+new_width = int(width * scale)
+new_height = int(height * scale)
+
+# Resize the image
+resized_image = logo_image.resize((new_width, new_height), resample=Image.Resampling.LANCZOS)
+tk_image = ImageTk.PhotoImage(resized_image)
+
+# Create sub-frame for labels and buttons
 left_frame = Frame(frame, bg="#bfc2c7")
+left_frame.pack(side=LEFT, fill=Y)
 
-#Créer titre
-label_title = Label(left_frame, text="Fichier 1", font=("Helvetica", 20), bg="#bfc2c7", fg="white")
-label_title.pack()
+#Label
+label1 = Label(left_frame, text="Fichier SNPx:", font=("Helvetica", 14), bg="#bfc2c7", fg="white")
+label1.grid(row=0, column=0, sticky=W, padx=(0), pady=(300, 0))  # Adjusted padding
+label2 = Label(left_frame, text="Fichier MergeSNP:", font=("Helvetica", 14), bg="#bfc2c7", fg="white")
+label2.grid(row=2, column=0, sticky=W, padx=(0), pady=(10, 0))  # Adjusted padding
 
-# On place la sous boite à gauche de la frame principale
-left_frame.grid(row=0, column=0, sticky=W)
+# Button to select file
+select_button1 = Button(left_frame, text="Sélectionner fichier", command=lambda: select_file(1))
+select_button1.grid(row=0, column=0, sticky=W, padx=170, pady=(300, 0))  # Adjusted padding
 
-# Afficher la frame
-frame.pack(expand=YES)
 
-# Création d'une barre de menu
+select_button2 = Button(left_frame, text="Sélectionner fichier", command=lambda: select_file(2))
+select_button2.grid(row=2, column=0, sticky=W, padx=170, pady=(8, 0))  # Adjusted padding
+
+# Create canvas and display image
+canvas = Canvas(frame, width=new_width, height=new_height, bg="#bfc2c7", bd=0, highlightthickness=0)
+canvas.create_image(0, 0, anchor=NW, image=tk_image)
+canvas.pack(side=RIGHT, fill=BOTH, expand=YES, padx=(20, 10), pady=(20, 10))  # Adjusted padding
+
+# Add menu
 menu_bar = Menu(window)
-
-# Créer un premier menu
 file_menu = Menu(menu_bar, tearoff=0)
 file_menu.add_command(label="Quitter", command=window.quit)
 menu_bar.add_cascade(label="Fichier", menu=file_menu)
-
-#Configurer la fenêtre pour ajouter la barre de menu
 window.config(menu=menu_bar)
 
-def select_file():
-    file_path = filedialog.askopenfilename()
-    if file_path:
-        print("Fichier selectionné:", file_path)
+file_path1 = ""
+file_path2 = ""
 
-select_button = Button(window, text="Select File", command=select_file)
-select_button.pack(pady=20)
+# Function to select file
+def select_file(file_number):
+    global file_path1, file_path2
+    if file_number == 1:
+        file_path1 = filedialog.askopenfilename()
+        if file_path1:
+            cheminFichier1 = Label(left_frame, text=file_path1, font=("Helvetica", 9),
+                                   bg="#bfc2c7", fg="white")
+            cheminFichier1.grid(row=1, column=0, sticky=W, padx=(0, 10), pady=(10, 0))
+    else:
+        file_path2 = filedialog.askopenfilename()
+        if file_path2:
+            cheminFichier2 = Label(left_frame, text=file_path2, font=("Helvetica", 9),
+                                   bg="#bfc2c7", fg="white")
+            cheminFichier2.grid(row=3, column=0, sticky=W, padx=(0, 0), pady=(10, 0))  # Adjusted padding
 
-# Afficher la fenêtre
+# Display window
 window.mainloop()
-
-
-
