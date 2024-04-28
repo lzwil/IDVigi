@@ -75,5 +75,7 @@ def select_file(file_number):
                                    bg="#bfc2c7", fg="white")
             cheminFichier2.grid(row=3, column=0, sticky=W, padx=(0, 0), pady=(10, 0))  # Adjusted padding
 
+
+
 # Display window
 window.mainloop()

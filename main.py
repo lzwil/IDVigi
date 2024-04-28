@@ -1,11 +1,13 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+from html2image import Html2Image as hti
 
 def creerCarteIdVigi(chemSNPx,chemMergeSNP):
 
     mergeSNPTable = pd.read_csv(chemMergeSNP, sep=";")
     snpxTable = pd.read_csv(chemSNPx, sep=";")
-
 
     #Recupération du rs de mergeSNP
     mergeSNPTable['variant'] = mergeSNPTable["dbSNP"].apply(lambda x: x.split('https://www.ncbi.nlm.nih.gov/snp/')[-1])
@@ -60,7 +62,8 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP):
         # Initialiser un dictionnaire
         result_row = {'Sample_1': sample_1}
 
-        # Itérer sur les lignes de mergeSnpGrouped pour trouver le nombre d'intersection avec le sample actuel de snpxGrouped
+        # Itérer sur les lignes de mergeSnpGrouped pour trouver le nombre
+        # d'intersection avec le sample actuel de snpxGrouped
         for index_2, row_2 in mergeSnpGrouped.iterrows():
             sample_2 = row_2['Sample']
             variants_2 = row_2['Variant']
@@ -71,15 +74,36 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP):
             # Stocker le nombre d'intersection de la paire de variants
             result_row[sample_2] = intersection_count
 
-        # Ajouter au dictionnaire les intersections avec le sample de mergeSnpGrouped et tous les autres samples (on ajoute un {} au dictionnaire)
+        # Ajouter au dictionnaire les intersections avec le sample de mergeSnpGrouped et tous les autres samples
+        # (on ajoute un {} au dictionnaire)
         result_data.append(result_row)
 
     # Créer le dataframe à partir de la liste de dictionnaire
     result_df = pd.DataFrame(result_data)
-    print(result_df)
 
-    # Appliquer le gradient de couleur au tableau
-    styled_df = result_df.style.background_gradient()
+    # Remove the first row (Sample_1)
+    result_df = result_df.iloc[0:]
 
-    # Render the styled DataFrame as HTML and save it to a file
-    html = styled_df.to_html("styled_table.html", index=False)
+    # Remove "Sample_1" from the column headers
+    result_df.columns.values[0] = ''
+
+    # Print the DataFrame to check the structure
+    print(result_df.to_string(index=False))
+
+    # Apply the gradient of color to the dataframe
+    styled_df = result_df.style.background_gradient(cmap='YlOrRd', vmin=0, vmax=20)
+
+    # Apply green background to cells with values >= 13 at the intersection of matching headers
+    for idx, row in result_df.iterrows():
+        for col in result_df.columns:
+            if col != '' and row[col] >= 13 and col in row.index:
+                styled_df.set_properties(**{'background-color': 'green'}, subset=pd.IndexSlice[idx, col])
+
+    # Center all numbers in the DataFrame
+    styled_df.set_properties(**{'text-align': 'center'})
+
+    # Save styled dataframe to HTML file
+    styled_df.to_html('styled_output.html', index=False)
+
+    # Take screenshot of HTML and save as image
+    hti().screenshot(html_file='styled_output.html', save_as='tableau_final.jpg')
