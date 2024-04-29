@@ -85,9 +85,6 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP):
     # Remove "Sample_1" from the column headers
     result_df.columns.values[0] = ''
 
-    # Print the DataFrame to check the structure
-    print(result_df.to_string(index=False))
-
     # Set the first column as the index
     result_df.set_index(result_df.columns[0], inplace=True)
     result_df.index.name = None
