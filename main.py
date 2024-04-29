@@ -1,7 +1,5 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
 from html2image import Html2Image as hti
 
 def creerCarteIdVigi(chemSNPx,chemMergeSNP):
@@ -90,6 +88,10 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP):
     # Print the DataFrame to check the structure
     print(result_df.to_string(index=False))
 
+    # Set the first column as the index
+    result_df.set_index(result_df.columns[0], inplace=True)
+    result_df.index.name = None
+
     # Apply the gradient of color to the dataframe
     styled_df = result_df.style.background_gradient(cmap='YlOrRd', vmin=0, vmax=20)
 
@@ -103,7 +105,7 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP):
     styled_df.set_properties(**{'text-align': 'center'})
 
     # Save styled dataframe to HTML file
-    styled_df.to_html('styled_output.html', index=False)
+    styled_df.to_html('styled_output.html')
 
-    # Take screenshot of HTML and save as image
+    # Take screenshot of HTML and save as image, adjusting height and width to include headers
     hti().screenshot(html_file='styled_output.html', save_as='tableau_final.jpg')

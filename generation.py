@@ -1,6 +1,40 @@
 from tkinter import *
 from tkinter import filedialog
 from PIL import Image, ImageTk
+from html2image import Html2Image
+import main
+
+
+# Function to update the canvas image
+def update_canvas_image(image_path):
+    # Load the new image
+    new_image = Image.open("C:/Users/leozw/PycharmProjects/IDVigi/tableau_final.png")
+    tk_image = ImageTk.PhotoImage(new_image)
+
+    # Update the canvas size to match the image size
+    canvas.config(width=tk_image.width(), height=tk_image.height())
+
+    # Update the canvas image
+    canvas.create_image(0, 0, anchor=NW, image=tk_image)
+    canvas.image = tk_image  # Keep reference to avoid garbage collection
+
+
+
+    # Update the canvas image
+    canvas.delete("all")
+    canvas.create_image(0, 0, anchor=NW, image=tk_image)
+    canvas.image = tk_image  # Keep reference to avoid garbage collection
+    canvas.pack(side=RIGHT, fill=BOTH, expand=YES, padx=(20, 10), pady=(20, 10))  # Adjusted padding
+
+# Function to execute the main function
+def execute_main():
+    global file_path1, file_path2
+    if file_path1 and file_path2:
+        main.creerCarteIdVigi(file_path1, file_path2)
+        update_canvas_image("tableau_final.png")
+    else:
+        print("Veuillez sélectionner les fichiers SNPx et MergeSNP.")
+
 
 # Create the window
 window = Tk()
@@ -44,6 +78,10 @@ select_button1.grid(row=0, column=0, sticky=W, padx=170, pady=(300, 0))  # Adjus
 select_button2 = Button(left_frame, text="Sélectionner fichier", command=lambda: select_file(2))
 select_button2.grid(row=2, column=0, sticky=W, padx=170, pady=(8, 0))  # Adjusted padding
 
+# Bouton pour exécuter la comparaison
+execute_button = Button(left_frame, text="Comparer", command=execute_main)
+execute_button.grid(row=4, column=0, sticky=W, padx=170, pady=(8, 0))  # Adjusted padding
+
 # Create canvas and display image
 canvas = Canvas(frame, width=new_width, height=new_height, bg="#bfc2c7", bd=0, highlightthickness=0)
 canvas.create_image(0, 0, anchor=NW, image=tk_image)
@@ -76,6 +114,23 @@ def select_file(file_number):
             cheminFichier2.grid(row=3, column=0, sticky=W, padx=(0, 0), pady=(10, 0))  # Adjusted padding
 
 
+
+# Define the CSS content
+css_content = """
+body {
+    background-color: white;
+}
+"""
+
+# Specify the file path for the CSS file
+css_file_path = "styles.css"
+
+# Write the CSS content to the CSS file
+with open(css_file_path, "w") as css_file:
+    css_file.write(css_content)
+
+hti = Html2Image()
+hti.screenshot(html_file="styled_output.html", css_file="styles.css", save_as='tableau_final.png', size=(2000, 1000))
 
 # Display window
 window.mainloop()
