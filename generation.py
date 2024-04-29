@@ -41,6 +41,7 @@ window = Tk()
 window.title("Générateur de tableau de corrélation")
 window.geometry("1080x720")
 window.config(background="#bfc2c7")
+window.iconbitmap('logo.ico')
 
 # Create the frame
 frame = Frame(window, bg="#bfc2c7")
@@ -71,15 +72,17 @@ label2 = Label(left_frame, text="Fichier MergeSNP:", font=("Helvetica", 14), bg=
 label2.grid(row=2, column=0, sticky=W, padx=(0), pady=(10, 0))  # Adjusted padding
 
 # Button to select file
-select_button1 = Button(left_frame, text="Sélectionner fichier", command=lambda: select_file(1))
+select_button1 = Button(left_frame, text="Sélectionner fichier SNPx", command=lambda: select_file(1),
+                        bg="#4CAF50", fg="white")
 select_button1.grid(row=0, column=0, sticky=W, padx=170, pady=(300, 0))  # Adjusted padding
 
 
-select_button2 = Button(left_frame, text="Sélectionner fichier", command=lambda: select_file(2))
+select_button2 = Button(left_frame, text="Sélectionner fichier MergeSNP", command=lambda: select_file(2),
+                        bg="#4CAF50", fg="white")
 select_button2.grid(row=2, column=0, sticky=W, padx=170, pady=(8, 0))  # Adjusted padding
 
 # Bouton pour exécuter la comparaison
-execute_button = Button(left_frame, text="Comparer", command=execute_main)
+execute_button = Button(left_frame, text="Comparer", command=execute_main, bg="#008CBA", fg="white")
 execute_button.grid(row=4, column=0, sticky=W, padx=170, pady=(8, 0))  # Adjusted padding
 
 # Create canvas and display image
