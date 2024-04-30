@@ -1,11 +1,18 @@
 # Documentation du Programme : IDVigi
-<img src="screenshotIDVigi1.PNG"> <img src="screenshotIDVigi2.PNG">
+
+<div align="center">
+    <img src="logo.png" width="400">
+</div>
+
 ## Aperçu
 Le programme IDVigi est un programme de vérification d'itentité basé sur la comparaison de résultats de génotypage de SNPs.  
 Les recommandations de bonnes pratiques de séquençage haut débit s'accordent sur la nécessité de disposer d'une technique de vérification d'identité, basée sur la comparaison des génotypes de plusieurs polymorphismes, les génotypes étant obtenus de manière indépendante par séquençage haut débit (next generation sequencing, NGS) et par une seconde technique, comme la PCR multiplex fluorescente spécifique à l'allèle.
 IDVigi permet d'évaluer la concordance des typages entre différents échantillons en se basant sur un nombre sélectionné de SNPs. Le programme compare les données entre deux fichiers d'entrée et génère une représentation graphique illustrant le nombre de SNPs partagés entre les échantillons. 
 
-
+<div align="center" style="display:flex; justify-content:space-around;">
+    <img src="screenshotIDVigi1.PNG" width="400">
+    <img src="screenshotIDVigi2.PNG" width="400">
+</div>
 ## Fichiers
 
 ### `app.py`
