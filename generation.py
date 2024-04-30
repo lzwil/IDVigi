@@ -121,12 +121,12 @@ canvas.pack(side=RIGHT, fill=BOTH, expand=YES, padx=(20, 10), pady=(20, 10))  # 
 
 # Create a label for the dropdown list
 sample_label = Label(left_frame, text="Select Sample:")
-sample_label.grid(row=0, column=0, padx=10, pady=5)
+sample_label.grid(row=0, column=0, sticky=W, padx=50, pady=(0, 270))  # Adjusted padding
 
 # Create a combobox (dropdown list) for sample selection
 samples = ["Sample1", "Sample2", "Sample3"]  # Update with your sample names
 sample_combobox = ttk.Combobox(left_frame, values=samples, state="readonly")
-sample_combobox.grid(row=0, column=0, padx=10, pady=5)
+sample_combobox.grid(row=0, column=0, sticky=W, padx=200, pady=(0, 270))  # Adjusted padding
 sample_combobox.bind("<<ComboboxSelected>>", on_sample_select)
 
 
