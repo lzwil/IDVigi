@@ -13,6 +13,7 @@ IDVigi permet d'évaluer la concordance des typages entre différents échantill
     <img src="screenshotIDVigi1.PNG" width="400">
     <img src="screenshotIDVigi2.PNG" width="400">
 </div>
+
 ## Fichiers
 
 ### `app.py`
