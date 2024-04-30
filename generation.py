@@ -1,8 +1,10 @@
 from tkinter import *
 from tkinter import filedialog
+from tkinter import ttk
 from PIL import Image, ImageTk
 from html2image import Html2Image
 import main
+import pandas as pd
 
 
 file_path1 = ""
@@ -46,8 +48,25 @@ def select_file(file_number):
                                    bg="#bfc2c7", fg="white")
             cheminFichier2.grid(row=3, column=0, sticky=W, padx=(0, 0), pady=(10, 0))  # Adjusted padding
 
+def on_sample_select(event):
+    selected_sample = sample_combobox.get()
+    snpx_unique_variants, merge_snp_unique_variants = main.get_unique_variants_for_sample(selected_sample, main.snpxGrouped, main.mergeSnpGrouped)
+    # Create a new window to display the DataFrame
+    dataframe_window = ttk.Toplevel(window)
+    dataframe_window.title("DataFrame Viewer")
+    # Display the DataFrame in the new window
+    df = pd.DataFrame([snpx_unique_variants, merge_snp_unique_variants])
+    display_dataframe_in_text_widget(df)
 
-# Create the window
+def display_dataframe_in_text_widget(dataframe, text_widget):
+    """
+    Display the DataFrame in a Text widget.
+    """
+    text_widget.config(state=ttk.NORMAL)
+    text_widget.delete('1.0', ttk.END)
+    text_widget.insert(ttk.END, dataframe.to_string())
+    text_widget.config(state=ttk.DISABLED)
+# Create the windttk
 window = Tk()
 window.title("Générateur de tableau de corrélation")
 window.geometry("1080x720")
@@ -97,6 +116,20 @@ canvas = Canvas(frame, width=new_width, height=new_height, bg="#bfc2c7", bd=0, h
 canvas.create_image(0, 0, anchor=NW, image=tk_logo)
 canvas.pack(side=RIGHT, fill=BOTH, expand=YES, padx=(20, 10), pady=(20, 10))  # Adjusted padding
 
+
+
+
+# Create a label for the dropdown list
+sample_label = Label(left_frame, text="Select Sample:")
+sample_label.grid(row=0, column=0, padx=10, pady=5)
+
+# Create a combobox (dropdown list) for sample selection
+samples = ["Sample1", "Sample2", "Sample3"]  # Update with your sample names
+sample_combobox = ttk.Combobox(left_frame, values=samples, state="readonly")
+sample_combobox.grid(row=0, column=0, padx=10, pady=5)
+sample_combobox.bind("<<ComboboxSelected>>", on_sample_select)
+
+
 # Add menu
 menu_bar = Menu(window)
 file_menu = Menu(menu_bar, tearoff=0)
@@ -106,6 +139,4 @@ window.config(menu=menu_bar)
 
 hti = Html2Image()
 hti.screenshot(html_file="styled_output.html", save_as='tableau_final.png', size=(2000, 1000))
-
-# Display window
 window.mainloop()

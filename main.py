@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from html2image import Html2Image as hti
 
+snpxGrouped = pd.DataFrame
+mergeSnpGrouped = pd.DataFrame
 def creerCarteIdVigi(chemSNPx,chemMergeSNP):
 
     mergeSNPTable = pd.read_csv(chemMergeSNP, sep=";")
@@ -72,6 +74,7 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP):
             # Stocker le nombre d'intersection de la paire de variants
             result_row[sample_2] = intersection_count
 
+
         # Ajouter au dictionnaire les intersections avec le sample de mergeSnpGrouped et tous les autres samples
         # (on ajoute un {} au dictionnaire)
         result_data.append(result_row)
@@ -106,3 +109,24 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP):
 
     # Take screenshot of HTML and save as image, adjusting height and width to include headers
     hti().screenshot(html_file='styled_output.html', save_as='tableau_final.jpg')
+
+
+def get_unique_variants_for_sample(sample_name, snpxGrouped, mergeSnpGrouped):
+    snpx_unique_variants = {}
+    merge_snp_unique_variants = {}
+
+    # Find the specified sample in snpxGrouped
+    snpx_sample_row = snpxGrouped[snpxGrouped['Sample'] == sample_name]
+    if not snpx_sample_row.empty:
+        snpx_variants = snpx_sample_row['Variant'].tolist()[0]  # Extract the set from the list
+
+        # Find the specified sample in mergeSnpGrouped
+        merge_snp_sample_row = mergeSnpGrouped[mergeSnpGrouped['Sample'] == sample_name]
+        if not merge_snp_sample_row.empty:
+            merge_snp_variants = merge_snp_sample_row['Variant'].tolist()[0]  # Extract the set from the list
+
+            # Get the unique variants for each method
+            snpx_unique_variants[sample_name] = sorted(snpx_variants - merge_snp_variants)
+            merge_snp_unique_variants[sample_name] = sorted(merge_snp_variants - snpx_variants)
+
+    return snpx_unique_variants, merge_snp_unique_variants
