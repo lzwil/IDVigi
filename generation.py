@@ -52,11 +52,6 @@ def select_file(file_number):
                                    bg="#bfc2c7", fg="white")
             cheminFichier2.grid(row=3, column=0, sticky=W, padx=(0, 0), pady=(10, 0))  # Adjusted padding
 
-# Function to create and display combobox after image
-def afficher_combobox_apres_image():
-    if left_frame:
-        afficherTableau.display_combobox_after_image(left_frame)
-
 # Create the windttk
 window = Tk()
 window.title("Générateur de tableau de corrélation")
