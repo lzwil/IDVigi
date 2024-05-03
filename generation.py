@@ -14,6 +14,11 @@ file_path2 = ""
 def update_canvas_image(image_path):
     # Load the new image
     new_image = Image.open("C:/Users/leozw/PycharmProjects/IDVigi/tableau_final.png")
+    # Resize the image to fit within the canvas size while preserving aspect ratio
+    max_width = 1300  # Adjust this value according to your canvas size
+    max_height = 1300 # Adjust this value according to your canvas size
+    new_image.thumbnail((max_width, max_height), Image.Resampling.BICUBIC)
+
     tk_image = ImageTk.PhotoImage(new_image)
 
     # Update the canvas size to match the image size
@@ -57,8 +62,8 @@ def select_file(file_number):
 
 # Create the windttk
 window = Tk()
-window.title("Générateur de tableau de corrélation")
-window.geometry("1080x720")
+window.title("IDVigi | Générateur de tableau de corrélation")
+window.geometry("1920x1200")
 window.config(background="#bfc2c7")
 window.iconbitmap('logo.ico')
 
@@ -75,6 +80,11 @@ new_width = int(width * scale)
 new_height = int(height * scale)
 resized_logo = logo_image.resize((new_width, new_height), resample=Image.Resampling.LANCZOS)
 tk_logo = ImageTk.PhotoImage(resized_logo)
+
+# Create canvas and display image
+canvas = Canvas(frame, width=1200, height=600, bg="#bfc2c7", bd=0, highlightthickness=0)
+canvas.create_image(300, 60, anchor=NW, image=tk_logo)
+canvas.pack(side=RIGHT, fill=BOTH, expand=YES, padx=(20, 10), pady=(20, 10))
 
 # Create sub-frame for labels and buttons
 left_frame = Frame(frame, bg="#bfc2c7")
@@ -97,12 +107,6 @@ select_button2.grid(row=2, column=0, sticky=W, padx=170, pady=(8, 0))
 # Bouton pour exécuter la comparaison
 execute_button = Button(left_frame, text="Comparer", command=execute_main, bg="#008CBA", fg="white")
 execute_button.grid(row=4, column=0, sticky=W, padx=170, pady=(8, 0))  # Adjusted padding
-
-# Create canvas and display image
-canvas = Canvas(frame, width=new_width, height=new_height, bg="#bfc2c7", bd=0, highlightthickness=0)
-canvas.create_image(0, 0, anchor=NW, image=tk_logo)
-canvas.pack(side=RIGHT, fill=BOTH, expand=YES, padx=(20, 10), pady=(20, 10))  # Adjusted padding
-
 
 # Add menu
 menu_bar = Menu(window)
