@@ -4,6 +4,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 from html2image import Html2Image
 import main
+import afficherTableau
 import pandas as pd
 
 df_unique = []
@@ -22,6 +23,9 @@ def update_canvas_image(image_path):
     canvas.delete("all")
     canvas.create_image(0, 0, anchor=NW, image=tk_image)
     canvas.image = tk_image  # Keep reference to avoid garbage collection
+
+    # After updating canvas image, display the combobox
+    afficherTableau.display_combobox_after_image(left_frame)
 
 # Function to execute the main function
 def execute_main():
@@ -47,6 +51,11 @@ def select_file(file_number):
             cheminFichier2 = Label(left_frame, text=file_path2, font=("Montserrat", 9),
                                    bg="#bfc2c7", fg="white")
             cheminFichier2.grid(row=3, column=0, sticky=W, padx=(0, 0), pady=(10, 0))  # Adjusted padding
+
+# Function to create and display combobox after image
+def afficher_combobox_apres_image():
+    if left_frame:
+        afficherTableau.display_combobox_after_image(left_frame)
 
 # Create the windttk
 window = Tk()

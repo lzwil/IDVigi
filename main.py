@@ -3,10 +3,12 @@ import numpy as np
 from html2image import Html2Image as hti
 
 samples = []
-snpxGrouped = pd.DataFrame
-mergeSnpGrouped = pd.DataFrame
+snpxGrouped = pd.DataFrame()
+mergeSnpGrouped = pd.DataFrame()
 def creerCarteIdVigi(chemSNPx,chemMergeSNP):
     global samples
+    global snpxGrouped
+    global mergeSnpGrouped
     mergeSNPTable = pd.read_csv(chemMergeSNP, sep=";")
     snpxTable = pd.read_csv(chemSNPx, sep=";")
 
@@ -111,21 +113,16 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP):
 
     # Take screenshot of HTML and save as image, adjusting height and width to include headers
     hti().screenshot(html_file='styled_output.html', save_as='tableau_final.jpg')
-
-
 def get_unique_variants_for_sample(sample_name, snpxGrouped, mergeSnpGrouped):
 
     # Find the specified sample in snpxGrouped
-    print(sample_name)
     snpx_sample_row = snpxGrouped[snpxGrouped['Sample'] == sample_name]
     merge_snp_sample_row = mergeSnpGrouped[mergeSnpGrouped['Sample'] == sample_name]
-    print(snpx_sample_row)
 
     # Extract variants from list
     snpx_variants = snpx_sample_row['Variant'].iloc[0]
     merge_snp_variants = merge_snp_sample_row['Variant'].iloc[0]
 
     df_unique = pd.DataFrame({'SNPx': sorted(snpx_variants - merge_snp_variants), 'NGS': sorted(merge_snp_variants - snpx_variants)})
-    print(df_unique)
 
     return df_unique
