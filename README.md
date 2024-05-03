@@ -22,7 +22,7 @@ Ce module gère les composants de l'interface utilisateur graphique (GUI) du pro
 ### `main.py`
 Ce module contient la fonctionnalité principale du programme. Il définit la fonction `creerCarteIdVigi()` qui effectue la comparaison SNP. Cette fonction lit les données SNP à partir de fichiers d'entrée, traite les données pour identifier les SNPs partagés entre les échantillons, génère une représentation graphique et enregistre le résultat sous forme de fichier image.
 
-### `afficherTableau`
+### `afficherTableau.py`
 Ce module permet d'afficher un tableau des discordances de génotypage entre les deux tehniques. Il permet de demander à l'utilisateur de choisir un échantillon, et le programme va retourner les génotypages différents entre les deux techiques pour cet échantillon.
 
 ## Fonctionnalités
