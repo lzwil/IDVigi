@@ -4,12 +4,11 @@ import main
 
 def display_combobox_after_image(left_frame):
     # Create a label for the dropdown list
-    sample_label = Label(left_frame, text="Select Sample:")
-    sample_label.grid(row=0, column=0, sticky=W, padx=50, pady=(0, 220))  # Adjusted padding
-
-    samples = main.samples  # Update with your sample names
+    sample_label = Label(left_frame, text="Sélectionner l'échantillon:")
+    sample_label.grid(row=0, column=0, sticky=W, padx=50, pady=(0, 220))
+    samples = main.samples.values.tolist()
     sample_combobox = ttk.Combobox(left_frame, values=samples, state="readonly")
-    sample_combobox.grid(row=0, column=0, sticky=W, padx=200, pady=(0, 220))  # Adjusted padding
+    sample_combobox.grid(row=0, column=0, sticky=W, padx=200, pady=(0, 220))
     sample_combobox.bind("<<ComboboxSelected>>", lambda event, lf=left_frame, sc=sample_combobox: on_sample_select(event, lf, sc))
 
 def display_dataframe_in_text_widget(dataframe, text_widget):
@@ -18,7 +17,7 @@ def display_dataframe_in_text_widget(dataframe, text_widget):
     """
     text_widget.config(state="normal")
     text_widget.delete('1.0', "end")
-    text_widget.insert("end", dataframe.to_string())
+    text_widget.insert("end", dataframe.to_string(index=False))
     text_widget.config(state="disabled")
 
 
@@ -33,5 +32,5 @@ def on_sample_select(event, left_frame, sample_combobox):
 
     # Create and display the text widget
     text_widget = Text(left_frame)
-    text_widget.place(x=55, y=80, width=300, height=180)  # Adjust the width and height as needed
+    text_widget.place(x=70, y=80, width=250, height=140)  # Adjust the width and height as needed
     display_dataframe_in_text_widget(df_unique, text_widget)

@@ -56,6 +56,7 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP):
 
     # Alimenter la liste de samples pour la fonction afficher les rs differents
     samples = snpxGrouped['Sample']
+    print(samples)
     # Initialiser une liste vide pour stocker les dictionnaires
     result_data = []
 
@@ -112,7 +113,7 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP):
     styled_df.to_html('styled_output.html')
 
     # Take screenshot of HTML and save as image, adjusting height and width to include headers
-    hti().screenshot(html_file='styled_output.html', save_as='tableau_final.jpg')
+    hti().screenshot(html_file='styled_output.html', save_as='tableau_final.png')
 def get_unique_variants_for_sample(sample_name, snpxGrouped, mergeSnpGrouped):
 
     # Find the specified sample in snpxGrouped

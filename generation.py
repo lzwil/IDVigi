@@ -1,15 +1,15 @@
 from tkinter import *
 from tkinter import filedialog
-from tkinter import ttk
 from PIL import Image, ImageTk
 from html2image import Html2Image
 import main
 import afficherTableau
-import pandas as pd
 
 df_unique = []
 file_path1 = ""
 file_path2 = ""
+
+
 # Function to update the canvas image
 def update_canvas_image(image_path):
     # Load the new image
@@ -27,6 +27,7 @@ def update_canvas_image(image_path):
     # After updating canvas image, display the combobox
     afficherTableau.display_combobox_after_image(left_frame)
 
+
 # Function to execute the main function
 def execute_main():
     global file_path1, file_path2, df_unique
@@ -35,6 +36,7 @@ def execute_main():
         update_canvas_image("tableau_final.png")
     else:
         print("Veuillez sélectionner les fichiers SNPx et MergeSNP.")
+
 
 # Function to select file
 def select_file(file_number):
@@ -50,7 +52,8 @@ def select_file(file_number):
         if file_path2:
             cheminFichier2 = Label(left_frame, text=file_path2, font=("Montserrat", 9),
                                    bg="#bfc2c7", fg="white")
-            cheminFichier2.grid(row=3, column=0, sticky=W, padx=(0, 0), pady=(10, 0))  # Adjusted padding
+            cheminFichier2.grid(row=3, column=0, sticky=W, padx=(0, 0), pady=(10, 0))
+
 
 # Create the windttk
 window = Tk()
@@ -66,7 +69,7 @@ frame.pack(fill=BOTH, expand=YES)
 # Load the image
 logo_image = Image.open("logo.png")
 width, height = logo_image.size
-max_width, max_height = 600, 600  # Enlarged width and height of the canvas
+max_width, max_height = 600, 600
 scale = min(max_width / width, max_height / height)
 new_width = int(width * scale)
 new_height = int(height * scale)
@@ -79,19 +82,17 @@ left_frame.pack(side=LEFT, fill=Y)
 
 #Label
 label1 = Label(left_frame, text="Fichier SNPx:", font=("Montserrat", 14), bg="#bfc2c7", fg="white")
-label1.grid(row=0, column=0, sticky=W, padx=(0), pady=(300, 0))  # Adjusted padding
+label1.grid(row=0, column=0, sticky=W, padx=0, pady=(300, 0))  # Adjusted padding
 label2 = Label(left_frame, text="Fichier MergeSNP:", font=("Montserrat", 14), bg="#bfc2c7", fg="white")
-label2.grid(row=2, column=0, sticky=W, padx=(0), pady=(10, 0))  # Adjusted padding
+label2.grid(row=2, column=0, sticky=W, padx=0, pady=(10, 0))  # Adjusted padding
 
 # Button to select file
 select_button1 = Button(left_frame, text="Sélectionner fichier SNPx", command=lambda: select_file(1),
                         bg="#4CAF50", fg="white")
-select_button1.grid(row=0, column=0, sticky=W, padx=170, pady=(300, 0))  # Adjusted padding
-
-
+select_button1.grid(row=0, column=0, sticky=W, padx=170, pady=(300, 0))
 select_button2 = Button(left_frame, text="Sélectionner fichier MergeSNP", command=lambda: select_file(2),
                         bg="#4CAF50", fg="white")
-select_button2.grid(row=2, column=0, sticky=W, padx=170, pady=(8, 0))  # Adjusted padding
+select_button2.grid(row=2, column=0, sticky=W, padx=170, pady=(8, 0))
 
 # Bouton pour exécuter la comparaison
 execute_button = Button(left_frame, text="Comparer", command=execute_main, bg="#008CBA", fg="white")
