@@ -2,10 +2,11 @@ import pandas as pd
 import numpy as np
 from html2image import Html2Image as hti
 
+samples = []
 snpxGrouped = pd.DataFrame
 mergeSnpGrouped = pd.DataFrame
 def creerCarteIdVigi(chemSNPx,chemMergeSNP):
-
+    global samples
     mergeSNPTable = pd.read_csv(chemMergeSNP, sep=";")
     snpxTable = pd.read_csv(chemSNPx, sep=";")
 
@@ -47,11 +48,12 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP):
     mergeSnpTrimmed.sort_values(['Sample', 'Variant'], inplace=True)
     snpxTrimmed.sort_values(['Sample', 'Variant'], inplace=True, ignore_index=True)
 
-
     # Grouper les variants par sample dans chaque table
     snpxGrouped = snpxTrimmed.groupby('Sample')['Variant'].apply(set).reset_index()
     mergeSnpGrouped = mergeSnpTrimmed.groupby('Sample')['Variant'].apply(set).reset_index()
 
+    # Alimenter la liste de samples pour la fonction afficher les rs differents
+    samples = snpxGrouped['Sample']
     # Initialiser une liste vide pour stocker les dictionnaires
     result_data = []
 
@@ -112,21 +114,18 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP):
 
 
 def get_unique_variants_for_sample(sample_name, snpxGrouped, mergeSnpGrouped):
-    snpx_unique_variants = {}
-    merge_snp_unique_variants = {}
 
     # Find the specified sample in snpxGrouped
+    print(sample_name)
     snpx_sample_row = snpxGrouped[snpxGrouped['Sample'] == sample_name]
-    if not snpx_sample_row.empty:
-        snpx_variants = snpx_sample_row['Variant'].tolist()[0]  # Extract the set from the list
+    merge_snp_sample_row = mergeSnpGrouped[mergeSnpGrouped['Sample'] == sample_name]
+    print(snpx_sample_row)
 
-        # Find the specified sample in mergeSnpGrouped
-        merge_snp_sample_row = mergeSnpGrouped[mergeSnpGrouped['Sample'] == sample_name]
-        if not merge_snp_sample_row.empty:
-            merge_snp_variants = merge_snp_sample_row['Variant'].tolist()[0]  # Extract the set from the list
+    # Extract variants from list
+    snpx_variants = snpx_sample_row['Variant'].iloc[0]
+    merge_snp_variants = merge_snp_sample_row['Variant'].iloc[0]
 
-            # Get the unique variants for each method
-            snpx_unique_variants[sample_name] = sorted(snpx_variants - merge_snp_variants)
-            merge_snp_unique_variants[sample_name] = sorted(merge_snp_variants - snpx_variants)
+    df_unique = pd.DataFrame({'SNPx': sorted(snpx_variants - merge_snp_variants), 'NGS': sorted(merge_snp_variants - snpx_variants)})
+    print(df_unique)
 
-    return snpx_unique_variants, merge_snp_unique_variants
+    return df_unique
