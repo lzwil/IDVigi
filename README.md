@@ -16,14 +16,14 @@ IDVigi permet d'évaluer la concordance des typages entre différents échantill
 
 ## Fichiers
 
-### `app.py`
-Ce fichier sert de point d'entrée au programme. Il importe les modules nécessaires et définit la fonction principale `principale()` responsable de lancer le processus de comparaison SNP.
-
 ### `generation.py`
-Ce module gère les composants de l'interface utilisateur graphique (GUI) du programme en utilisant Tkinter. Il permet aux utilisateurs de sélectionner des fichiers d'entrée via une boîte de dialogue de fichier, affiche les chemins des fichiers sélectionnés et déclenche l'exécution de la fonction principale de comparaison SNP. De plus, il contient des fonctions pour mettre à jour les images du canevas et exécuter la fonction principale.
+Ce module gère les composants de l'interface utilisateur graphique (GUI) du programme en utilisant Tkinter. Il permet aux utilisateurs de sélectionner des fichiers d'entrée via une boîte de dialogue de fichier, affiche les chemins des fichiers sélectionnés et déclenche l'exécution de la fonction principale de comparaison SNP. Il contient des fonctions pour mettre à jour les images affichées et d'appeller la fonction principale lorsque l'utilisateur appuie sur le bouton "Comparer". 
 
 ### `main.py`
 Ce module contient la fonctionnalité principale du programme. Il définit la fonction `creerCarteIdVigi()` qui effectue la comparaison SNP. Cette fonction lit les données SNP à partir de fichiers d'entrée, traite les données pour identifier les SNPs partagés entre les échantillons, génère une représentation graphique et enregistre le résultat sous forme de fichier image.
+
+### `afficherTableau.py`
+Ce module permet d'afficher un tableau des discordances de génotypage entre les deux tehniques. Il permet de demander à l'utilisateur de choisir un échantillon, et le programme va retourner les génotypages différents entre les deux techiques pour cet échantillon.
 
 ## Fonctionnalités
 
@@ -37,14 +37,17 @@ Ce module contient la fonctionnalité principale du programme. Il définit la fo
 - Fournit une interface conviviale pour sélectionner les fichiers d'entrée.
 - Affiche les chemins des fichiers sélectionnés pour vérification.
 - Permet aux utilisateurs de déclencher le processus de comparaison SNP.
+- Permet de visualiser les génotypages disordants entre les deux techniques.
 
 ## Comment Utiliser
 ##### **Deux fichiers de test sont fournis dans le package d'installation. *MergeSNPplex-xx-xxx.csv* comporte les résulats de séquençage NGS et *snpxplex_genotype_2024__04__12__154034-cloud.csv* contient les génotypages obtenus par la technique SNPXPlex**
 1. Lancer le programme en exécutant `app.py`.
 2. Utiliser l'interface GUI pour sélectionner les fichiers SNP (`SNPx` et `MergeSNP`) en cliquant sur les boutons respectifs.
-3. Une fois les deux fichiers sélectionnés, cliquer sur le bouton "Comparer" pour lancer le processus de comparaison SNP.
-4. Le programme traitera les fichiers d'entrée et générera une représentation graphique illustrant la concordance SNP.
+3. Une fois les deux fichiers sélectionnés, cliquer sur le bouton "Comparer" pour lancer le processus de comparaison des SNPs.
+4. Le programme traitera les fichiers d'entrée et générera une représentation graphique illustrant la concordance des SNPs.
 5. Le fichier image résultant (`tableau_final.png`) sera affiché dans l'interface GUI.
+6. Après l'affichage du tableau de corrélation, une nouvelle fenêtre apparait dans l'angle supérieur gauche. Un menu déroulant permet de choisir un échantillon.
+7. Après le choix effectué, une liste des génotypages discordants est affichée. 
 
 
 ## Dépendances
