@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import ttk
 from tkinter import filedialog
 from PIL import Image, ImageTk
 from html2image import Html2Image
@@ -15,8 +16,8 @@ def update_canvas_image(image_path):
     # Load the new image
     new_image = Image.open("C:/Users/leozw/PycharmProjects/IDVigi/tableau_final.png")
     # Resize the image to fit within the canvas size while preserving aspect ratio
-    max_width = 1300  # Adjust this value according to your canvas size
-    max_height = 1300 # Adjust this value according to your canvas size
+    max_width = 1300
+    max_height = 1300
     new_image.thumbnail((max_width, max_height), Image.Resampling.BICUBIC)
 
     tk_image = ImageTk.PhotoImage(new_image)
@@ -37,7 +38,8 @@ def update_canvas_image(image_path):
 def execute_main():
     global file_path1, file_path2, df_unique
     if file_path1 and file_path2:
-        main.creerCarteIdVigi(file_path1, file_path2)
+        cutoff = int(cutoff_combobox.get())
+        main.creerCarteIdVigi(file_path1, file_path2, cutoff)
         update_canvas_image("tableau_final.png")
     else:
         print("Veuillez sélectionner les fichiers SNPx et MergeSNP.")
@@ -102,11 +104,20 @@ select_button1 = Button(left_frame, text="Sélectionner fichier SNPx", command=l
 select_button1.grid(row=0, column=0, sticky=W, padx=170, pady=(300, 0))
 select_button2 = Button(left_frame, text="Sélectionner fichier MergeSNP", command=lambda: select_file(2),
                         bg="#4CAF50", fg="white")
-select_button2.grid(row=2, column=0, sticky=W, padx=170, pady=(8, 0))
+select_button2.grid(row=2, column=0, sticky=W, padx=170, pady=(12, 0))
+
+# Label cutoff (seuil de validation)
+label2 = Label(left_frame, text="Seuil de validation:", font=("Montserrat", 14), bg="#bfc2c7", fg="white")
+label2.grid(row=4, column=0, sticky=W, padx=0, pady=(10, 0))  # Adjusted padding
+
+# Button to select the cutoff
+cutoff_combobox = ttk.Combobox(left_frame, values=list(range(16)), state="readonly", width=4)
+cutoff_combobox.set(13)
+cutoff_combobox.grid(row=4, column=0, sticky=W, padx=170, pady=(12, 0))
 
 # Bouton pour exécuter la comparaison
 execute_button = Button(left_frame, text="Comparer", command=execute_main, bg="#008CBA", fg="white")
-execute_button.grid(row=4, column=0, sticky=W, padx=170, pady=(8, 0))  # Adjusted padding
+execute_button.grid(row=5, column=0, sticky=W, padx=170, pady=(8, 0))  # Adjusted padding
 
 # Add menu
 menu_bar = Menu(window)

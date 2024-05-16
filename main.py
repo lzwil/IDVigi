@@ -5,7 +5,7 @@ from html2image import Html2Image as hti
 samples = []
 snpxGrouped = pd.DataFrame()
 mergeSnpGrouped = pd.DataFrame()
-def creerCarteIdVigi(chemSNPx,chemMergeSNP):
+def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     global samples
     global snpxGrouped
     global mergeSnpGrouped
@@ -56,7 +56,6 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP):
 
     # Alimenter la liste de samples pour la fonction afficher les rs differents
     samples = snpxGrouped['Sample']
-    print(samples)
     # Initialiser une liste vide pour stocker les dictionnaires
     result_data = []
 
@@ -100,10 +99,10 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP):
     # Apply the gradient of color to the dataframe
     styled_df = result_df.style.background_gradient(cmap='YlOrRd', vmin=0, vmax=20)
 
-    # Apply green background to cells with values >= 13 at the intersection of matching headers
+    # Apply green background to cells with values >= 13 (chosen cutoff) at the intersection of matching headers
     for idx, row in result_df.iterrows():
         for col in result_df.columns:
-            if col != '' and row[col] >= 13 and col in row.index:
+            if col != '' and row[col] >= cutoff and col in row.index:
                 styled_df.set_properties(**{'background-color': 'green'}, subset=pd.IndexSlice[idx, col])
 
     # Center all numbers in the DataFrame
