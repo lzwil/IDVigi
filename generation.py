@@ -5,10 +5,124 @@ from PIL import Image, ImageTk
 from html2image import Html2Image
 import main
 import afficherTableau
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.units import inch
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image as ReportLabImage
+from datetime import datetime
+import locale
 
 df_unique = []
 file_path1 = ""
 file_path2 = ""
+selected_sample = ""
+
+
+# Function to export to pdf
+def export_to_pdf(table_data, output_path):
+    cutoff = int(cutoff_combobox.get())
+
+    # Load the logo image
+    logo_path = "logo_ap_hm_2020_RVB.JPG"
+    logo_image = Image.open(logo_path)
+
+    # Resize the logo if needed
+    max_width = 150  # Adjust as needed
+    max_height = 150  # Adjust as needed
+    if logo_image.width > max_width or logo_image.height > max_height:
+        logo_image.thumbnail((max_width, max_height))
+
+    # Create a ReportLabImage object for the logo
+    logo_reportlab_image = ReportLabImage(logo_path, width=logo_image.width, height=logo_image.height)
+
+    # Set up the PDF document
+    doc = SimpleDocTemplate(output_path, pagesize=letter)
+    elements = []
+
+    # Add the logo to the elements list
+    elements.append(logo_reportlab_image)
+
+    # Title
+    title_text = "Concordance entre SNPxPlex et le résultat de NGS"
+    title_style = getSampleStyleSheet()['Title']
+    title_paragraph = Paragraph(title_text, title_style)
+    title_width = title_paragraph.wrap(doc.width, doc.rightMargin - doc.leftMargin)[0]
+    title_height = title_paragraph.wrap(doc.width, doc.rightMargin - doc.leftMargin)[1]
+
+    # Calculate the space available for the title next to the logo
+    remaining_width = doc.width - logo_image.width
+    remaining_height = doc.height - title_height
+
+    # Adjust the position of the title
+    title_x = logo_image.width + 10  # Adjust the spacing between logo and title
+    title_y = doc.height - title_height - 20  # Adjust the vertical position of the title
+
+    # Add the title to the elements list
+    elements.append(title_paragraph)
+
+    # Date
+    locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
+    date_text = datetime.now().strftime("%d %B %Y")
+    date_style = getSampleStyleSheet()['Normal']
+    date_paragraph = Paragraph(f"Date: {date_text}", date_style)
+    date_paragraph_width = date_paragraph.wrap(doc.width, doc.rightMargin - doc.leftMargin)[0]
+    date_paragraph_height = date_paragraph.wrap(doc.width, doc.rightMargin - doc.leftMargin)[1]
+
+    # Adjust the position of the date
+    date_x = doc.width - date_paragraph_width - 20
+    date_y = title_y - date_paragraph_height - 10
+
+    # Add the date to the elements list
+    elements.append(date_paragraph)
+
+    # Sentence
+    phrase_text = f"Validation des échantillons du run <b>{main.nom_run}</b> sur <b>{cutoff}</b> SNPs"
+    phrase_style = getSampleStyleSheet()['Normal']
+    phrase_paragraph = Paragraph(phrase_text, phrase_style)
+    phrase_paragraph_width = phrase_paragraph.wrap(doc.width, doc.rightMargin - doc.leftMargin)[0]
+    phrase_paragraph_height = phrase_paragraph.wrap(doc.width, doc.rightMargin - doc.leftMargin)[1]
+
+    # Adjust the position of the sentence
+    phrase_x = logo_image.width + 10  # Adjust the spacing between logo and sentence
+    phrase_y = date_y - phrase_paragraph_height - 10
+
+    # Add the sentence to the elements list
+    elements.append(phrase_paragraph)
+
+    # Convert DataFrame to a list of lists for the table
+    table_data_list = [list(table_data.columns)] + [list(row) for row in table_data.itertuples(index=False)]
+
+    # Create the table
+    table = Table(table_data_list, colWidths=[2 * inch] * 3)
+
+    # Style the table
+    table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ])
+    table.setStyle(table_style)
+
+    # Add the table to the elements list
+    elements.append(table)
+
+    # Build the PDF
+    doc.build
+
+
+def export_pdf():
+    from reportlab.lib import colors  # Importing colors here to avoid redundancy
+    pdf_path = filedialog.asksaveasfilename(defaultextension=".pdf",
+                                             filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")])
+    if pdf_path:
+        export_to_pdf(main.self_intersection_df, pdf_path)
 
 
 # Function to update the canvas image
@@ -64,7 +178,7 @@ def select_file(file_number):
 
 # Create the windttk
 window = Tk()
-window.title("IDVigi | Générateur de tableau de corrélation")
+window.title("IDVigi | Générateur de matrice de concordance")
 window.geometry("1920x1200")
 window.config(background="#bfc2c7")
 window.iconbitmap('logo.ico')
@@ -106,7 +220,7 @@ select_button2 = Button(left_frame, text="Sélectionner fichier MergeSNP", comma
                         bg="#4CAF50", fg="white")
 select_button2.grid(row=2, column=0, sticky=W, padx=170, pady=(12, 0))
 
-# Label cutoff (seuil de validation)
+# Label cutoff (Validation threshold)
 label2 = Label(left_frame, text="Seuil de validation:", font=("Montserrat", 14), bg="#bfc2c7", fg="white")
 label2.grid(row=4, column=0, sticky=W, padx=0, pady=(10, 0))  # Adjusted padding
 
@@ -115,15 +229,17 @@ cutoff_combobox = ttk.Combobox(left_frame, values=list(range(16)), state="readon
 cutoff_combobox.set(13)
 cutoff_combobox.grid(row=4, column=0, sticky=W, padx=170, pady=(12, 0))
 
-# Bouton pour exécuter la comparaison
+# Button to execute the comparison by calling the main function
 execute_button = Button(left_frame, text="Comparer", command=execute_main, bg="#008CBA", fg="white")
-execute_button.grid(row=5, column=0, sticky=W, padx=170, pady=(8, 0))  # Adjusted padding
+execute_button.grid(row=5, column=0, sticky=W, padx=170, pady=(8, 0))
 
 # Add menu
 menu_bar = Menu(window)
 file_menu = Menu(menu_bar, tearoff=0)
 file_menu.add_command(label="Quitter", command=window.quit)
 menu_bar.add_cascade(label="Fichier", menu=file_menu)
+menu_bar.add_command(label="Exporter en PDF", command=export_pdf)
+
 window.config(menu=menu_bar)
 
 hti = Html2Image()

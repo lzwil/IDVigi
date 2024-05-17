@@ -2,13 +2,24 @@ import pandas as pd
 import numpy as np
 from html2image import Html2Image as hti
 
+nom_run = ""
 samples = []
 snpxGrouped = pd.DataFrame()
 mergeSnpGrouped = pd.DataFrame()
+self_intersection_df = pd.DataFrame()
 def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
+    global nom_run
     global samples
     global snpxGrouped
     global mergeSnpGrouped
+    global self_intersection_df
+
+    # Récupérer le nom du run pour l'output pdf
+    prefix = "MergeSNPplex-"
+    suffix = ".csv"
+    result = chemMergeSNP.split(prefix)[-1]
+    nom_run = result[:-len(suffix)]
+
     mergeSNPTable = pd.read_csv(chemMergeSNP, sep=";")
     snpxTable = pd.read_csv(chemSNPx, sep=";")
 
@@ -56,8 +67,13 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
 
     # Alimenter la liste de samples pour la fonction afficher les rs differents
     samples = snpxGrouped['Sample']
+
     # Initialiser une liste vide pour stocker les dictionnaires
     result_data = []
+
+    # Liste vide pour stocker les intersections à afficher dans l'output pdf
+    self_intersection_data = []
+
 
     # Comparer chaque sample de snpxGrouped avec chaque sample de mergeSnpGrouped
     for index_1, row_1 in snpxGrouped.iterrows():
@@ -78,7 +94,9 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
             # Stocker le nombre d'intersection de la paire de variants
             result_row[sample_2] = intersection_count
 
-
+            # Stocker la somme des intersection des mêmes échantillons pour la sortie pdf
+            if sample_1 == sample_2:
+                self_intersection_data.append({'Sample': sample_1, 'Intersection_Count': intersection_count})
         # Ajouter au dictionnaire les intersections avec le sample de mergeSnpGrouped et tous les autres samples
         # (on ajoute un {} au dictionnaire)
         result_data.append(result_row)
@@ -87,14 +105,17 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     result_df = pd.DataFrame(result_data)
 
     # Remove the first row (Sample_1)
-    result_df = result_df.iloc[0:]
-
     # Remove "Sample_1" from the column headers
-    result_df.columns.values[0] = ''
-
     # Set the first column as the index
+    result_df = result_df.iloc[0:]
+    result_df.columns.values[0] = ''
     result_df.set_index(result_df.columns[0], inplace=True)
     result_df.index.name = None
+
+
+    # Create a DataFrame for the intersection counts of the same samples for the pdf output
+    self_intersection_df = pd.DataFrame(self_intersection_data)
+    self_intersection_df.columns = ["Echantillons", "Concordance"]
 
     # Apply the gradient of color to the dataframe
     styled_df = result_df.style.background_gradient(cmap='YlOrRd', vmin=0, vmax=20)
