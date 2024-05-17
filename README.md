@@ -7,7 +7,7 @@
 ## Aperçu
 Le programme IDVigi est un programme de vérification d'itentité basé sur la comparaison de résultats de génotypage de SNPs.  
 Les recommandations de bonnes pratiques de séquençage haut débit s'accordent sur la nécessité de disposer d'une technique de vérification d'identité, basée sur la comparaison des génotypes de plusieurs polymorphismes, les génotypes étant obtenus de manière indépendante par séquençage haut débit (next generation sequencing, NGS) et par une seconde technique, comme la PCR multiplex fluorescente spécifique à l'allèle.
-IDVigi permet d'évaluer la concordance des typages entre différents échantillons en se basant sur un nombre sélectionné de SNPs. Le programme compare les données entre deux fichiers d'entrée et génère une représentation graphique illustrant le nombre de SNPs partagés entre les échantillons. 
+IDVigi permet d'évaluer la concordance des typages entre différents échantillons en se basant sur un nombre sélectionné de SNPs. Le programme compare les données entre deux fichiers d'entrée et génère une représentation graphique illustrant le nombre de SNPs partagés entre les résultats de génotypage des deux techiques. 
 
 <div align="center" style="display:flex; justify-content:space-around;">
     <img src="screenshotIDVigi1.PNG" width="400">
@@ -17,13 +17,13 @@ IDVigi permet d'évaluer la concordance des typages entre différents échantill
 ## Fichiers
 
 ### `generation.py`
-Ce module gère les composants de l'interface utilisateur graphique (GUI) du programme en utilisant Tkinter. Il permet aux utilisateurs de sélectionner des fichiers d'entrée via une boîte de dialogue de fichier, affiche les chemins des fichiers sélectionnés et déclenche l'exécution de la fonction principale de comparaison SNP. Il contient des fonctions pour mettre à jour les images affichées et d'appeller la fonction principale lorsque l'utilisateur appuie sur le bouton "Comparer". 
+Ce module gère les composants de l'interface utilisateur graphique du programme en utilisant Tkinter. Il permet aux utilisateurs de sélectionner des fichiers d'entrée via une boîte de dialogue de fichier, affiche les chemins des fichiers sélectionnés et déclenche l'exécution de la fonction principale de comparaison SNP. Il contient des fonctions pour mettre à jour les images affichées et d'appeller la fonction principale lorsque l'utilisateur appuie sur le bouton "Comparer". 
 
 ### `main.py`
-Ce module contient la fonctionnalité principale du programme. Il définit la fonction `creerCarteIdVigi()` qui effectue la comparaison SNP. Cette fonction lit les données SNP à partir de fichiers d'entrée, traite les données pour identifier les SNPs partagés entre les échantillons, génère une représentation graphique et enregistre le résultat sous forme de fichier image.
+Ce module contient la fonctionnalité principale du programme. Il définit la fonction `creerCarteIdVigi()` qui effectue la comparaison des SNPs. Cette fonction lit les données des fichiers d'entrée et fait de la manipulation de table pour concaténer les informations importantes, traite les données pour identifier les SNPs partagés entre les échantillons, génère une représentation graphique et enregistre le résultat sous forme de fichier image.
 
 ### `afficherTableau.py`
-Ce module permet d'afficher un tableau des discordances de génotypage entre les deux tehniques. Il permet de demander à l'utilisateur de choisir un échantillon, et le programme va retourner les génotypages différents entre les deux techiques pour cet échantillon.
+Ce module permet d'afficher une tableau des discordances de génotypage entre les deux techniques. Il permet de demander à l'utilisateur de choisir un échantillon, et le programme va retourner les SNPs accompagnés des génotypages différents entre les deux techiques pour cet échantillon.
 
 ## Fonctionnalités
 
@@ -41,13 +41,14 @@ Ce module permet d'afficher un tableau des discordances de génotypage entre les
 
 ## Comment Utiliser
 ##### **Deux fichiers de test sont fournis dans le package d'installation. *MergeSNPplex-xx-xxx.csv* comporte les résulats de séquençage NGS et *snpxplex_genotype_2024__04__12__154034-cloud.csv* contient les génotypages obtenus par la technique SNPXPlex**
-1. Lancer le programme en exécutant `app.py`.
+1. Lancer le programme en exécutant `generation.py`.
 2. Utiliser l'interface GUI pour sélectionner les fichiers SNP (`SNPx` et `MergeSNP`) en cliquant sur les boutons respectifs.
-3. Une fois les deux fichiers sélectionnés, cliquer sur le bouton "Comparer" pour lancer le processus de comparaison des SNPs.
-4. Le programme traitera les fichiers d'entrée et générera une représentation graphique illustrant la concordance des SNPs.
-5. Le fichier image résultant (`tableau_final.png`) sera affiché dans l'interface GUI.
-6. Après l'affichage du tableau de corrélation, une nouvelle fenêtre apparait dans l'angle supérieur gauche. Un menu déroulant permet de choisir un échantillon.
-7. Après le choix effectué, une liste des génotypages discordants est affichée. 
+3. Choisir le seil de validaiton en cliquant sur la boite déroulante
+4. Une fois les deux fichiers sélectionnés, cliquer sur le bouton "Comparer" pour lancer le processus de comparaison des SNPs.
+5. Le programme traitera les fichiers d'entrée et générera une représentation graphique illustrant la concordance des SNPs.
+6. Le fichier image résultant (`tableau_final.png`) sera affiché dans l'interface GUI.
+7. Après l'affichage du tableau de corrélation, une nouvelle fenêtre apparait dans l'angle supérieur gauche. Un menu déroulant permet de choisir un échantillon.
+8. Après le choix effectué, une liste des génotypages discordants est affichée. 
 
 
 ## Dépendances
@@ -61,4 +62,4 @@ Ce module permet d'afficher un tableau des discordances de génotypage entre les
 ## Remarque
 - S'assurer que toutes les dépendances requises sont installées avant d'exécuter le programme.- Le programme suppose que les fichiers d'entrée sont dans un format spécifique **(.csv)** compatible avec le code fourni.
 
-Cette documentation fournit un aperçu du programme IDVigi, de ses fonctionnalités et de son utilisation. Pour toute assistance supplémentaire ou toute question, ,n'hésitez pas à me contacter. 
+Cette documentation fournit un aperçu du programme IDVigi, de ses fonctionnalités et de son utilisation. Pour toute assistance supplémentaire ou toute question, n'hésitez pas à me contacter. 
