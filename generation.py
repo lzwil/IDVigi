@@ -40,55 +40,48 @@ def export_to_pdf(table_data, output_path):
     doc = SimpleDocTemplate(output_path, pagesize=letter)
     elements = []
 
-    # Add the logo to the elements list
-    elements.append(logo_reportlab_image)
-
     # Title
     title_text = "Concordance entre SNPxPlex et le résultat de NGS"
     title_style = getSampleStyleSheet()['Title']
     title_paragraph = Paragraph(title_text, title_style)
-    title_width = title_paragraph.wrap(doc.width, doc.rightMargin - doc.leftMargin)[0]
-    title_height = title_paragraph.wrap(doc.width, doc.rightMargin - doc.leftMargin)[1]
 
-    # Calculate the space available for the title next to the logo
-    remaining_width = doc.width - logo_image.width
-    remaining_height = doc.height - title_height
+    # Create a table to position the logo and title side by side
+    header_table = Table(
+        [[logo_reportlab_image, title_paragraph]],
+        colWidths=[logo_image.width + 10, doc.width - logo_image.width - 20]
+    )
+    header_table.setStyle(TableStyle([
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('LEFTPADDING', (0, 0), (0, 0), 0),
+        ('RIGHTPADDING', (0, 0), (0, 0), 0),
+        ('TOPPADDING', (0, 0), (0, 0), 0),
+        ('BOTTOMPADDING', (0, 0), (0, 0), 0),
+    ]))
 
-    # Adjust the position of the title
-    title_x = logo_image.width + 10  # Adjust the spacing between logo and title
-    title_y = doc.height - title_height - 20  # Adjust the vertical position of the title
+    # Add the header table to the elements list
+    elements.append(header_table)
 
-    # Add the title to the elements list
-    elements.append(title_paragraph)
+    # Add a spacer after the header table
+    elements.append(Spacer(1, 25))  # Adjust the height as needed
 
     # Date
     locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
     date_text = datetime.now().strftime("%d %B %Y")
     date_style = getSampleStyleSheet()['Normal']
     date_paragraph = Paragraph(f"Date: {date_text}", date_style)
-    date_paragraph_width = date_paragraph.wrap(doc.width, doc.rightMargin - doc.leftMargin)[0]
-    date_paragraph_height = date_paragraph.wrap(doc.width, doc.rightMargin - doc.leftMargin)[1]
-
-    # Adjust the position of the date
-    date_x = doc.width - date_paragraph_width - 20
-    date_y = title_y - date_paragraph_height - 10
 
     # Add the date to the elements list
     elements.append(date_paragraph)
+    elements.append(Spacer(1, 12))
 
     # Sentence
     phrase_text = f"Validation des échantillons du run <b>{main.nom_run}</b> sur <b>{cutoff}</b> SNPs"
     phrase_style = getSampleStyleSheet()['Normal']
     phrase_paragraph = Paragraph(phrase_text, phrase_style)
-    phrase_paragraph_width = phrase_paragraph.wrap(doc.width, doc.rightMargin - doc.leftMargin)[0]
-    phrase_paragraph_height = phrase_paragraph.wrap(doc.width, doc.rightMargin - doc.leftMargin)[1]
-
-    # Adjust the position of the sentence
-    phrase_x = logo_image.width + 10  # Adjust the spacing between logo and sentence
-    phrase_y = date_y - phrase_paragraph_height - 10
 
     # Add the sentence to the elements list
     elements.append(phrase_paragraph)
+    elements.append(Spacer(1, 25))
 
     # Convert DataFrame to a list of lists for the table
     table_data_list = [list(table_data.columns)] + [list(row) for row in table_data.itertuples(index=False)]
@@ -113,8 +106,17 @@ def export_to_pdf(table_data, output_path):
     # Add the table to the elements list
     elements.append(table)
 
+    # Resize and add the final image
+    final_image_path = "tableau_final.png"
+    final_image = Image.open(final_image_path)
+    max_width, max_height = letter
+    if final_image.width > max_width or final_image.height > max_height:
+        final_image.thumbnail((max_width, max_height))
+
+    elements.append(ReportLabImage(final_image_path, width=final_image.width, height=final_image.height))
+
     # Build the PDF
-    doc.build
+    doc.build(elements)
 
 
 def export_pdf():
@@ -239,9 +241,6 @@ file_menu = Menu(menu_bar, tearoff=0)
 file_menu.add_command(label="Quitter", command=window.quit)
 menu_bar.add_cascade(label="Fichier", menu=file_menu)
 menu_bar.add_command(label="Exporter en PDF", command=export_pdf)
-
 window.config(menu=menu_bar)
 
-hti = Html2Image()
-hti.screenshot(html_file="styled_output.html", save_as='tableau_final.png', size=(2000, 1000))
 window.mainloop()

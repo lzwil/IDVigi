@@ -118,12 +118,12 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     self_intersection_df.columns = ["Echantillons", "Concordance"]
 
     # Apply the gradient of color to the dataframe
-    styled_df = result_df.style.background_gradient(cmap='YlOrRd', vmin=0, vmax=20)
+    styled_df = result_df.style.background_gradient(cmap='YlOrRd', vmin=0, vmax=19)
 
     # Apply green background to cells with values >= 13 (chosen cutoff) at the intersection of matching headers
     for idx, row in result_df.iterrows():
         for col in result_df.columns:
-            if col != '' and row[col] >= cutoff and col in row.index:
+            if idx == col and row[col] >= cutoff:
                 styled_df.set_properties(**{'background-color': 'green'}, subset=pd.IndexSlice[idx, col])
 
     # Center all numbers in the DataFrame
@@ -134,15 +134,12 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
 
     # Take screenshot of HTML and save as image, adjusting height and width to include headers
     hti().screenshot(html_file='styled_output.html', save_as='tableau_final.png')
+
+
 def get_unique_variants_for_sample(sample_name, snpxGrouped, mergeSnpGrouped):
 
-    # Find the specified sample in snpxGrouped
-    snpx_sample_row = snpxGrouped[snpxGrouped['Sample'] == sample_name]
-    merge_snp_sample_row = mergeSnpGrouped[mergeSnpGrouped['Sample'] == sample_name]
-
-    # Extract variants from list
-    snpx_variants = snpx_sample_row['Variant'].iloc[0]
-    merge_snp_variants = merge_snp_sample_row['Variant'].iloc[0]
+    snpx_variants = snpxGrouped.loc[snpxGrouped['Sample'] == sample_name, 'Variant'].iloc[0]
+    merge_snp_variants = mergeSnpGrouped.loc[mergeSnpGrouped['Sample'] == sample_name, 'Variant'].iloc[0]
 
     df_unique = pd.DataFrame({'SNPx': sorted(snpx_variants - merge_snp_variants), 'NGS': sorted(merge_snp_variants - snpx_variants)})
 

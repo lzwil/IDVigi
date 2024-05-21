@@ -12,9 +12,6 @@ def display_combobox_after_image(left_frame):
     sample_combobox.bind("<<ComboboxSelected>>", lambda event, lf=left_frame, sc=sample_combobox: on_sample_select(event, lf, sc))
 
 def display_dataframe_in_text_widget(dataframe, text_widget):
-    """
-    Display the DataFrame in a Text widget.
-    """
     text_widget.config(state="normal")
     text_widget.delete('1.0', "end")
     text_widget.insert("end", dataframe.to_string(index=False))
