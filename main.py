@@ -17,44 +17,30 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     # Récupérer le nom du run pour l'output pdf
     prefix = "MergeSNPplex-"
     suffix = ".csv"
-    result = chemMergeSNP.split(prefix)[-1]
-    nom_run = result[:-len(suffix)]
+    nom_run = chemMergeSNP.split(prefix)[-1][:-len(suffix)]
 
     mergeSNPTable = pd.read_csv(chemMergeSNP, sep=";")
     snpxTable = pd.read_csv(chemSNPx, sep=";")
 
-    #Recupération du rs de mergeSNP
+    # Process mergeSNPTable
     mergeSNPTable['variant'] = mergeSNPTable["dbSNP"].apply(lambda x: x.split('https://www.ncbi.nlm.nih.gov/snp/')[-1])
     mergeSNPTable['Sample'] = mergeSNPTable['Sample'].apply(lambda x: x.split('_')[0])
-
-    #Convertir la fréquence en float
     mergeSNPTable['Frequency'] = mergeSNPTable['Frequency'].str.replace(',', '.').astype(float)
+    mergeSNPTable['Allele_passe_seuil'] = np.where(mergeSNPTable['Frequency'] >= 10, mergeSNPTable['Allele'], np.nan)
 
-    #Ajouter une colonne avec les alleles retenus
-    mergeSNPTable['Allele_passe_seuil'] = np.where(mergeSNPTable['Frequency'] >= 10,
-                                                   mergeSNPTable['Allele'],
-                                                   np.nan)
-
-    #Grouper par sample et variant et concaténer les valeurs de Allele_passe_seuil
-    mergeSnpTrimmed = mergeSNPTable.groupby(['Sample', 'variant'])['Allele_passe_seuil'].apply(lambda x: ''.join(x.dropna())
-                                                                                               ).reset_index()
-
-    #Concaténer rs et génotype dans la même colonne
+    mergeSnpTrimmed = mergeSNPTable.groupby(['Sample', 'variant'])['Allele_passe_seuil'].apply(
+        lambda x: ''.join(x.dropna())).reset_index()
     mergeSnpTrimmed['Variant'] = mergeSnpTrimmed['variant'] + mergeSnpTrimmed['Allele_passe_seuil']
     mergeSnpTrimmed = mergeSnpTrimmed.drop(columns=['Allele_passe_seuil', 'variant'])
 
-
-    #Recuperation rs et genotype du snpx
+    # Process snpxTable
     snpxTable['variant'] = snpxTable['Marker Name'] + np.where(snpxTable['Allele 1'] == snpxTable['Allele 2'],
-                                                           snpxTable['Allele 1'],
-                                                           snpxTable['Allele 1'] + snpxTable['Allele 2'])
-
-    #Creation du nouveau tableau snpx
-    snpxTrimmed = pd.DataFrame()
-
-    #Extraction du numero de sample et du rs complet
-    snpxTrimmed['Sample'] = snpxTable['Sample Name'].apply(lambda x: x[:x.find('-', x.find('-') + 1)])
-    snpxTrimmed['Variant'] = snpxTable['variant']
+                                                               snpxTable['Allele 1'],
+                                                               snpxTable['Allele 1'] + snpxTable['Allele 2'])
+    snpxTrimmed = pd.DataFrame({
+        'Sample': snpxTable['Sample Name'].apply(lambda x: x[:x.find('-', x.find('-') + 1)]),
+        'Variant': snpxTable['variant']
+    })
 
 
     #Ordonner les nouveaux tableaux par sample et par rs
@@ -66,12 +52,10 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     mergeSnpGrouped = mergeSnpTrimmed.groupby('Sample')['Variant'].apply(set).reset_index()
 
     # Alimenter la liste de samples pour la fonction afficher les rs differents
-    samples = snpxGrouped['Sample']
-
     # Initialiser une liste vide pour stocker les dictionnaires
-    result_data = []
-
     # Liste vide pour stocker les intersections à afficher dans l'output pdf
+    samples = snpxGrouped['Sample']
+    result_data = []
     self_intersection_data = []
 
 
@@ -114,8 +98,7 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
 
 
     # Create a DataFrame for the intersection counts of the same samples for the pdf output
-    self_intersection_df = pd.DataFrame(self_intersection_data)
-    self_intersection_df.columns = ["Echantillons", "Concordance"]
+    self_intersection_df = pd.DataFrame(self_intersection_data, columns=["Echantillons", "Concordance"])
 
     # Apply the gradient of color to the dataframe
     styled_df = result_df.style.background_gradient(cmap='YlOrRd', vmin=0, vmax=19)
