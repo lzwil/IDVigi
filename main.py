@@ -80,14 +80,14 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
 
             # Stocker la somme des intersection des mêmes échantillons pour la sortie pdf
             if sample_1 == sample_2:
-                self_intersection_data.append({'Sample': sample_1, 'Intersection_Count': intersection_count})
+                self_intersection_data.append({'Echantillons': sample_1, 'Concordance': intersection_count})
         # Ajouter au dictionnaire les intersections avec le sample de mergeSnpGrouped et tous les autres samples
         # (on ajoute un {} au dictionnaire)
         result_data.append(result_row)
 
     # Créer le dataframe à partir de la liste de dictionnaire
     result_df = pd.DataFrame(result_data)
-
+    print(self_intersection_data)
     # Remove the first row (Sample_1)
     # Remove "Sample_1" from the column headers
     # Set the first column as the index
@@ -99,6 +99,7 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
 
     # Create a DataFrame for the intersection counts of the same samples for the pdf output
     self_intersection_df = pd.DataFrame(self_intersection_data, columns=["Echantillons", "Concordance"])
+    print(self_intersection_df)
 
     # Apply the gradient of color to the dataframe
     styled_df = result_df.style.background_gradient(cmap='YlOrRd', vmin=0, vmax=19)
