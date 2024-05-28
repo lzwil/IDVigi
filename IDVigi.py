@@ -129,7 +129,6 @@ def export_to_pdf(table_data, output_path):
 
 
 def export_pdf():
-    from reportlab.lib import colors  # Importing colors here to avoid redundancy
     pdf_path = filedialog.asksaveasfilename(defaultextension=".pdf",
                                              filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")])
     if pdf_path:
@@ -139,7 +138,7 @@ def export_pdf():
 # Function to update the canvas image
 def update_canvas_image(image_path):
     # Load the new image
-    new_image = Image.open("C:/Users/leozw/PycharmProjects/IDVigi/tableau_final.png")
+    new_image = Image.open("tableau_final.png")
     # Resize the image to fit within the canvas size while preserving aspect ratio
     max_width = 1300
     max_height = 1300
