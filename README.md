@@ -63,6 +63,7 @@ Ce module permet d'afficher une tableau des discordances de génotypage entre le
 - pandas
 - numpy
 - csv
+- Jinja2
 
 ## Remarque
 - S'assurer que toutes les dépendances requises sont installées avant d'exécuter le programme.- Le programme suppose que les fichiers d'entrée sont dans un format spécifique **(.csv)** compatible avec le code fourni.
