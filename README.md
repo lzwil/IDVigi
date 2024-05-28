@@ -33,11 +33,12 @@ Ce module permet d'afficher une tableau des discordances de génotypage entre le
 - Génère une représentation graphique de la concordance SNP à l'aide d'un tableau comportant un gradient coloré selon le nombre de SNPs en commun.
 - Enregistre la représentation graphique sous forme de fichier image.
 
-### Interface GUI
+### Interface
 - Fournit une interface conviviale pour sélectionner les fichiers d'entrée.
 - Affiche les chemins des fichiers sélectionnés pour vérification.
 - Permet aux utilisateurs de déclencher le processus de comparaison SNP.
 - Permet de visualiser les génotypages disordants entre les deux techniques.
+- Permet d'exporter un rapport
 
 ## Comment Utiliser
 ##### **Deux fichiers de test sont fournis dans le package d'installation. *MergeSNPplex-xx-xxx.csv* comporte les résulats de séquençage NGS et *snpxplex_genotype_2024__04__12__154034-cloud.csv* contient les génotypages obtenus par la technique SNPXPlex**
@@ -52,12 +53,16 @@ Ce module permet d'afficher une tableau des discordances de génotypage entre le
 
 
 ## Dépendances
-- Python 3.x
-- Pandas
-- NumPy
-- Tkinter (pour GUI)
-- PIL (Python Imaging Library)
-- html2image
+- tkinter
+- PIL 
+- ImageTk 
+- Html2Image 
+- reportlab
+- datetime
+- locale
+- pandas
+- numpy
+- csv
 
 ## Remarque
 - S'assurer que toutes les dépendances requises sont installées avant d'exécuter le programme.- Le programme suppose que les fichiers d'entrée sont dans un format spécifique **(.csv)** compatible avec le code fourni.
