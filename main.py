@@ -118,10 +118,10 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     hti().screenshot(html_file='styled_output.html', save_as='tableau_final.png')
 
 
-def get_unique_variants_for_sample(sample_name, snpxGrouped, mergeSnpGrouped):
+def get_unique_variants_for_sample(sample_name1, sample_name2, snpxGrouped, mergeSnpGrouped):
 
-    snpx_variants = snpxGrouped.loc[snpxGrouped['Sample'] == sample_name, 'Variant'].iloc[0]
-    merge_snp_variants = mergeSnpGrouped.loc[mergeSnpGrouped['Sample'] == sample_name, 'Variant'].iloc[0]
+    snpx_variants = snpxGrouped.loc[snpxGrouped['Sample'] == sample_name1, 'Variant'].iloc[0]
+    merge_snp_variants = mergeSnpGrouped.loc[mergeSnpGrouped['Sample'] == sample_name2, 'Variant'].iloc[0]
 
     df_unique = pd.DataFrame({'SNPx': sorted(snpx_variants - merge_snp_variants), 'NGS': sorted(merge_snp_variants - snpx_variants)})
 

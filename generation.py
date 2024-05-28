@@ -103,6 +103,16 @@ def export_to_pdf(table_data, output_path):
     ])
     table.setStyle(table_style)
 
+    # Style conditionel en fonction du seuil
+    for row_index, row in enumerate(table_data_list[1:], start=1):
+        for col_index, cell in enumerate(row):
+            if col_index == 1:
+                if int(cell) >= cutoff:
+                    table_style.add('BACKGROUND', (col_index, row_index), (col_index, row_index), colors.green)
+
+    # Mettre à jour le style
+    table.setStyle(table_style)
+
     # Add the table to the elements list
     elements.append(table)
 
