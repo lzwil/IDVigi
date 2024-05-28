@@ -11,11 +11,17 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image as ReportLabImage
 from datetime import datetime
 import locale
+import os
+import sys
 
 df_unique = []
 file_path1 = ""
 file_path2 = ""
 selected_sample = ""
+
+# Get the directory where the script is located
+script_dir = os.path.dirname(sys.argv[0])
+icon_path = os.path.join(script_dir, "logo.ico")
 
 
 # Function to export to pdf
@@ -191,7 +197,7 @@ window = Tk()
 window.title("IDVigi | Générateur de matrice de concordance")
 window.geometry("1920x1200")
 window.config(background="#bfc2c7")
-window.iconbitmap('logo.ico')
+window.iconbitmap(default=icon_path)
 
 # Create the frame
 frame = Frame(window, bg="#bfc2c7")
