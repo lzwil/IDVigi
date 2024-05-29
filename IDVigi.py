@@ -19,12 +19,19 @@ file_path1 = ""
 file_path2 = ""
 selected_sample = ""
 
+def resource_path(relative_path):
+    try:
+        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 # Function to export to pdf
 def export_to_pdf(table_data, output_path):
     cutoff = int(cutoff_combobox.get())
 
     # Load the logo image
-    logo_path = os.path.join(os.path.dirname(__file__), 'Images/logo_ap_hm_2020_RVB.JPG')
+    logo_path = resource_path("Images/logo_ap_hm_2020_RVB.JPG")
     logo_image = Image.open(logo_path)
 
     # Resize the logo if needed
@@ -117,7 +124,7 @@ def export_to_pdf(table_data, output_path):
     elements.append(table)
 
     # Resize and add the final image
-    final_image_path = os.path.join(os.path.dirname(__file__), 'tableau_final.png')
+    final_image_path = resource_path('tableau_final.png')
     final_image = Image.open(final_image_path)
     max_width, max_height = letter
     if final_image.width > max_width or final_image.height > max_height:
@@ -128,18 +135,16 @@ def export_to_pdf(table_data, output_path):
     # Build the PDF
     doc.build(elements)
 
-
 def export_pdf():
     pdf_path = filedialog.asksaveasfilename(defaultextension=".pdf",
                                              filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")])
     if pdf_path:
         export_to_pdf(main.self_intersection_df, pdf_path)
 
-
 # Function to update the canvas image
 def update_canvas_image(image_path):
     # Load the new image
-    new_image_path = os.path.join(os.path.dirname(__file__), 'tableau_final.png')
+    new_image_path = resource_path('tableau_final.png')
     new_image = Image.open(new_image_path)
     # Resize the image to fit within the canvas size while preserving aspect ratio
     max_width = 1300
@@ -159,7 +164,6 @@ def update_canvas_image(image_path):
     # After updating canvas image, display the combobox
     afficherTableau.display_combobox_after_image(left_frame)
 
-
 # Function to execute the main function
 def execute_main():
     global file_path1, file_path2, df_unique
@@ -169,7 +173,6 @@ def execute_main():
         update_canvas_image("tableau_final.png")
     else:
         print("Veuillez sélectionner les fichiers SNPx et MergeSNP.")
-
 
 # Function to select file
 def select_file(file_number):
@@ -187,7 +190,6 @@ def select_file(file_number):
                                    bg="#bfc2c7", fg="white")
             cheminFichier2.grid(row=3, column=0, sticky=W, padx=(0, 0), pady=(10, 0))
 
-
 # Create the window
 window = Tk()
 window.title("IDVigi | Générateur de matrice de concordance")
@@ -195,14 +197,14 @@ window.geometry("1920x1200")
 window.config(background="#bfc2c7")
 
 # Setting logo image
-window.iconbitmap("Images/logo.ico")
+window.iconbitmap(resource_path("Images/logo.ico"))
 
 # Create the frame
 frame = Frame(window, bg="#bfc2c7")
 frame.pack(fill=BOTH, expand=YES)
 
 # Load the image
-logo_image = Image.open("Images/logo.png")
+logo_image = Image.open(resource_path("Images/logo.png"))
 width, height = logo_image.size
 max_width, max_height = 600, 600
 scale = min(max_width / width, max_height / height)

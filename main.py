@@ -1,12 +1,24 @@
 import pandas as pd
 import numpy as np
 from html2image import Html2Image as hti
+import os
+import sys
 
 nom_run = ""
 samples = []
 snpxGrouped = pd.DataFrame()
 mergeSnpGrouped = pd.DataFrame()
 self_intersection_df = pd.DataFrame()
+
+
+def resource_path(relative_path):
+    try:
+        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+
 def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     global nom_run
     global samples
@@ -115,7 +127,7 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     styled_df.to_html('styled_output.html')
 
     # Take screenshot of HTML and save as image, adjusting height and width to include headers
-    hti().screenshot(html_file='styled_output.html', save_as='tableau_final.png')
+    hti().screenshot(html_file=resource_path('styled_output.html'), save_as='tableau_final.png')
 
 
 def get_unique_variants_for_sample(sample_name1, sample_name2, snpxGrouped, mergeSnpGrouped):
