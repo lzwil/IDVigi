@@ -19,17 +19,12 @@ file_path1 = ""
 file_path2 = ""
 selected_sample = ""
 
-# Get the directory where the script is located
-script_dir = os.path.dirname(sys.argv[0])
-icon_path = os.path.join(script_dir, "logo.ico")
-
-
 # Function to export to pdf
 def export_to_pdf(table_data, output_path):
     cutoff = int(cutoff_combobox.get())
 
     # Load the logo image
-    logo_path = "logo_ap_hm_2020_RVB.JPG"
+    logo_path = os.path.join(os.path.dirname(__file__), 'Images/logo_ap_hm_2020_RVB.JPG')
     logo_image = Image.open(logo_path)
 
     # Resize the logo if needed
@@ -122,7 +117,7 @@ def export_to_pdf(table_data, output_path):
     elements.append(table)
 
     # Resize and add the final image
-    final_image_path = "tableau_final.png"
+    final_image_path = os.path.join(os.path.dirname(__file__), 'tableau_final.png')
     final_image = Image.open(final_image_path)
     max_width, max_height = letter
     if final_image.width > max_width or final_image.height > max_height:
@@ -144,7 +139,8 @@ def export_pdf():
 # Function to update the canvas image
 def update_canvas_image(image_path):
     # Load the new image
-    new_image = Image.open("tableau_final.png")
+    new_image_path = os.path.join(os.path.dirname(__file__), 'tableau_final.png')
+    new_image = Image.open(new_image_path)
     # Resize the image to fit within the canvas size while preserving aspect ratio
     max_width = 1300
     max_height = 1300
@@ -192,19 +188,21 @@ def select_file(file_number):
             cheminFichier2.grid(row=3, column=0, sticky=W, padx=(0, 0), pady=(10, 0))
 
 
-# Create the windttk
+# Create the window
 window = Tk()
 window.title("IDVigi | Générateur de matrice de concordance")
 window.geometry("1920x1200")
 window.config(background="#bfc2c7")
-window.iconbitmap(default=icon_path)
+
+# Setting logo image
+window.iconbitmap("Images/logo.ico")
 
 # Create the frame
 frame = Frame(window, bg="#bfc2c7")
 frame.pack(fill=BOTH, expand=YES)
 
 # Load the image
-logo_image = Image.open("logo.png")
+logo_image = Image.open("Images/logo.png")
 width, height = logo_image.size
 max_width, max_height = 600, 600
 scale = min(max_width / width, max_height / height)
@@ -222,7 +220,7 @@ canvas.pack(side=RIGHT, fill=BOTH, expand=YES, padx=(20, 10), pady=(20, 10))
 left_frame = Frame(frame, bg="#bfc2c7")
 left_frame.pack(side=LEFT, fill=Y)
 
-#Label
+# Label
 label1 = Label(left_frame, text="Fichier SNPx:", font=("Montserrat", 14), bg="#bfc2c7", fg="white")
 label1.grid(row=0, column=0, sticky=W, padx=0, pady=(300, 0))  # Adjusted padding
 label2 = Label(left_frame, text="Fichier MergeSNP:", font=("Montserrat", 14), bg="#bfc2c7", fg="white")
