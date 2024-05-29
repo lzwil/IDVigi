@@ -123,14 +123,22 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     # Center all numbers in the DataFrame
     styled_df.set_properties(**{'text-align': 'center'})
 
+    # repertoire utilisé pour le .exe
+    output_dir = resource_path('output')
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
     # Save styled dataframe to HTML file
-    styled_df.to_html('styled_output.html')
+    html_file_path = os.path.join(output_dir, 'styled_output.html')
+    styled_df.to_html(html_file_path)
 
-    html_path = resource_path('styled_output.html')
+    #html_path = resource_path('styled_output.html')
     # Take screenshot of HTML and save as image, adjusting height and width to include headers
-    hti().screenshot(html_file=html_path, save_as='tableau_final.png')
+    #hti().screenshot(html_file=html_file_path, save_as=resource_path('tableau_final.png'))
 
-
+    # Take screenshot of HTML and save as image
+    hti_instance = hti(output_path=resource_path('output'))  # Specify the output directory
+    hti_instance.screenshot(html_file=html_file_path, save_as='tableau_final.png')
 def get_unique_variants_for_sample(sample_name1, sample_name2, snpxGrouped, mergeSnpGrouped):
 
     snpx_variants = snpxGrouped.loc[snpxGrouped['Sample'] == sample_name1, 'Variant'].iloc[0]

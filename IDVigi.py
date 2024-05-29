@@ -123,8 +123,11 @@ def export_to_pdf(table_data, output_path):
     # Add the table to the elements list
     elements.append(table)
 
+    # Set the file path
+    output_dir = resource_path('output')
+    final_image_path = os.path.join(output_dir, "tableau_final.png")
+
     # Resize and add the final image
-    final_image_path = resource_path('tableau_final.png')
     final_image = Image.open(final_image_path)
     max_width, max_height = letter
     if final_image.width > max_width or final_image.height > max_height:
@@ -144,7 +147,8 @@ def export_pdf():
 # Function to update the canvas image
 def update_canvas_image(image_path):
     # Load the new image
-    new_image_path = resource_path('tableau_final.png')
+    output_dir = resource_path('output')
+    new_image_path = os.path.join(output_dir, image_path)
     new_image = Image.open(new_image_path)
     # Resize the image to fit within the canvas size while preserving aspect ratio
     max_width = 1300
