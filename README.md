@@ -42,7 +42,7 @@ Ce module permet d'afficher une tableau des discordances de génotypage entre le
 
 ## Comment Utiliser
 ##### **Deux fichiers de test sont fournis dans le package d'installation. *MergeSNPplex-xx-xxx.csv* comporte les résulats de séquençage NGS et *snpxplex_genotype_2024__04__12__154034-cloud.csv* contient les génotypages obtenus par la technique SNPXPlex**
-1. Lancer le programme en exécutant `IDVigi.py`.
+1. Lancer le programme en exécutant `IDVigi.py` ou `IDVigi.exe`.
 2. Utiliser l'interface GUI pour sélectionner les fichiers SNP (`SNPx` et `MergeSNP`) en cliquant sur les boutons respectifs. **Ne pas se tromper de fichier car ils ont un format différent qui sera reconnu par le programme.**
 3. Choisir le seuil de validaiton en cliquant sur la boite déroulante
 4. Une fois les deux fichiers sélectionnés, cliquer sur le bouton "Comparer" pour lancer le processus de comparaison des SNPs.
@@ -65,6 +65,7 @@ Ce module permet d'afficher une tableau des discordances de génotypage entre le
 - Jinja2
 
 ## Remarque
-- S'assurer que toutes les dépendances requises sont installées avant d'exécuter le programme. Les fichiers d'entrée doivent être au format spécifique **(.csv)** compatible avec le code fourni.
+- Pour utiliser le programme localement en python, s'assurer que toutes les dépendances requises sont installées avant d'exécuter le programme. il faut éxécuter le fichier ***IDVigi.py*** qui est le point d'entrée du programme et appelle les deux autres fichiers ***main.py*** et ***afficherTableau.py***. Sinon, télécharger le ***.exe*** et l'éxécuter. 
+- Les fichiers d'entrée doivent être au format spécifique ***(.csv)*** compatible avec le code fourni.
 
-Cette documentation fournit un aperçu du programme IDVigi, de ses fonctionnalités et de son utilisation. Pour toute assistance supplémentaire ou toute question, n'hésitez pas à me contacter. 
+Cette documentation fournit un aperçu du programme **IDVigi**, de ses fonctionnalités et de son utilisation. Pour toute assistance supplémentaire ou toute question, n'hésitez pas à me contacter. 
