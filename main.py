@@ -126,8 +126,9 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     # Save styled dataframe to HTML file
     styled_df.to_html('styled_output.html')
 
+    html_path = resource_path('styled_output.html')
     # Take screenshot of HTML and save as image, adjusting height and width to include headers
-    hti().screenshot(html_file=resource_path('styled_output.html'), save_as='tableau_final.png')
+    hti().screenshot(html_file=html_path, save_as='tableau_final.png')
 
 
 def get_unique_variants_for_sample(sample_name1, sample_name2, snpxGrouped, mergeSnpGrouped):
