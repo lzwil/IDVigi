@@ -66,7 +66,11 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     # Alimenter la liste de samples pour la fonction afficher les rs differents
     # Initialiser une liste vide pour stocker les dictionnaires
     # Liste vide pour stocker les intersections à afficher dans l'output pdf
-    samples = snpxGrouped['Sample']
+    if len(mergeSnpGrouped) > len(snpxGrouped):
+        samples = mergeSnpGrouped['Sample']
+    else:
+        samples = snpxGrouped['Sample']
+
     result_data = []
     self_intersection_data = []
 
