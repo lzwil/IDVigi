@@ -1,4 +1,4 @@
-"Sample";"Chromosome";"Region";"Type";"Reference";"Allele";"Reference allele";"Length";"Zygosity";"Count";"Coverage";"Frequency";"QUAL";"Most frequent alternative allele (MFAA)";"Homo_sapiens_refseq_GRCh37.p13_Genes";"dbSNP"
+Sample;"Chromosome";"Region";"Type";"Reference";"Allele";"Reference allele";"Length";"Zygosity";"Count";"Coverage";"Frequency";"QUAL";"Most frequent alternative allele (MFAA)";"Homo_sapiens_refseq_GRCh37.p13_Genes";dbSNP
 "23-1991_C_23-64_S13 (paired) (MutationTest, OA, KNOWN)";"1";"43124859";"SNV";"C";"C";"Yes";"1";"Homozygous";"311";"316";"98,417721519";"200";"T";"PPIH";"https://www.ncbi.nlm.nih.gov/snp/rs3738494"
 "23-1991_C_23-64_S13 (paired) (MutationTest, OA, KNOWN)";"1";"43124859";"SNV";"C";"T";"No";"1";"Unknown";"4";"316";"1,2658227848";"200";"C";"PPIH";"https://www.ncbi.nlm.nih.gov/snp/rs3738494"
 "23-1991_C_23-64_S13 (paired) (MutationTest, OA, KNOWN)";"2";"105654716";"SNV";"C";"C";"Yes";"1";"Homozygous";"740";"754";"98,1432360743";"200";"T";"LOC102724691, MRPS9";"https://www.ncbi.nlm.nih.gov/snp/rs3739160"

@@ -32,7 +32,7 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     nom_run = chemMergeSNP.split(prefix)[-1][:-len(suffix)]
 
     mergeSNPTable = pd.read_csv(chemMergeSNP, sep=";")
-    snpxTable = pd.read_csv(chemSNPx, sep=";")
+    snpxTable = pd.read_csv(chemSNPx, sep=",")
 
     # Process mergeSNPTable
     mergeSNPTable['variant'] = mergeSNPTable["dbSNP"].apply(lambda x: x.split('https://www.ncbi.nlm.nih.gov/snp/')[-1])
@@ -97,6 +97,7 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
             # Stocker la somme des intersection des mêmes échantillons pour la sortie pdf
             if sample_1 == sample_2:
                 self_intersection_data.append({'Echantillons': sample_1, 'Concordance': intersection_count})
+
         # Ajouter au dictionnaire les intersections avec le sample de mergeSnpGrouped et tous les autres samples
         # (on ajoute un {} au dictionnaire)
         result_data.append(result_row)
