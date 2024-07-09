@@ -92,9 +92,8 @@ def export_to_pdf(table_data, output_path):
 
     # Convert DataFrame to a list of lists for the table
     table_data_list = [list(table_data.columns)] + [list(row) for row in table_data.itertuples(index=False)]
-
     # Create the table
-    table = Table(table_data_list, colWidths=[2 * inch] * 3)
+    table = Table(table_data_list, colWidths=[2 * inch] * len(table_data_list[0]))
 
     # Style the table
     table_style = TableStyle([
@@ -142,7 +141,7 @@ def export_pdf():
     pdf_path = filedialog.asksaveasfilename(defaultextension=".pdf",
                                              filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")])
     if pdf_path:
-        export_to_pdf(main.self_intersection_df, pdf_path)
+        export_to_pdf(main.merge_output_df, pdf_path)
 
 # Function to update the canvas image
 def update_canvas_image(image_path):

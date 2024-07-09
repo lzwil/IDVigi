@@ -9,6 +9,7 @@ samples = []
 snpxGrouped = pd.DataFrame()
 mergeSnpGrouped = pd.DataFrame()
 self_intersection_df = pd.DataFrame()
+merge_output_df = pd.DataFrame()
 
 
 def resource_path(relative_path):
@@ -25,6 +26,7 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     global snpxGrouped
     global mergeSnpGrouped
     global self_intersection_df
+    global merge_output_df
 
     # Récupérer le nom du run pour l'output pdf
     prefix = "MergeSNPplex-"
@@ -73,6 +75,7 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
 
     result_data = []
     self_intersection_data = []
+    risque_data = []
 
 
     # Comparer chaque sample de snpxGrouped avec chaque sample de mergeSnpGrouped
@@ -95,8 +98,12 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
             result_row[sample_2] = intersection_count
 
             # Stocker la somme des intersection des mêmes échantillons pour la sortie pdf
+            # Et le nombre d'intersection averc un autre sammple si il dépasse le seuil
             if sample_1 == sample_2:
                 self_intersection_data.append({'Echantillons': sample_1, 'Concordance': intersection_count})
+
+            if sample_1 != sample_2 and intersection_count >= cutoff:
+                risque_data.append({'Echantillons': sample_1, 'Risque': str(intersection_count) + " SNPs avec " + str(sample_2)})
 
         # Ajouter au dictionnaire les intersections avec le sample de mergeSnpGrouped et tous les autres samples
         # (on ajoute un {} au dictionnaire)
@@ -113,8 +120,15 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     result_df.set_index(result_df.columns[0], inplace=True)
     result_df.index.name = None
 
-    # Create a DataFrame for the intersection counts of the same samples for the pdf output
+    # Tableau pour les intersections et les risques d'inversion pour l'output pdf
     self_intersection_df = pd.DataFrame(self_intersection_data, columns=["Echantillons", "Concordance"])
+    risque_data_df = pd.DataFrame(risque_data, columns=["Echantillons", "Risque"])
+
+    # Grouper par échantillon le tableau de risque-
+    risque_data_df = risque_data_df.groupby('Echantillons')['Risque'].apply(lambda x: '\n'.join(x)).reset_index()
+
+    # Assembler les deux tableaux ensemble
+    merge_output_df = self_intersection_df.merge(risque_data_df, on="Echantillons", how="left").fillna(" ")
 
     # Apply the gradient of color to the dataframe
     styled_df = result_df.style.background_gradient(cmap='YlOrRd', vmin=0, vmax=19)
