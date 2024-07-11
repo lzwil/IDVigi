@@ -8,7 +8,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.units import inch
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image as ReportLabImage
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image as ReportLabImage, PageBreak
 from datetime import datetime
 import locale
 import os
@@ -92,35 +92,39 @@ def export_to_pdf(table_data, output_path):
 
     # Convert DataFrame to a list of lists for the table
     table_data_list = [list(table_data.columns)] + [list(row) for row in table_data.itertuples(index=False)]
+
     # Create the table
     table = Table(table_data_list, colWidths=[2 * inch] * len(table_data_list[0]))
 
     # Style the table
     table_style = TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Header row
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Header text color
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 12),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Header font
+        ('FONTSIZE', (0, 0), (-1, 0), 12),  # Header font size
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),  # Header padding
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),  # Data rows
         ('GRID', (0, 0), (-1, -1), 1, colors.black),
     ])
     table.setStyle(table_style)
 
-    # Style conditionel en fonction du seuil
+    # Conditional styling based on cutoff
     for row_index, row in enumerate(table_data_list[1:], start=1):
         for col_index, cell in enumerate(row):
             if col_index == 1:
                 if int(cell) >= cutoff:
                     table_style.add('BACKGROUND', (col_index, row_index), (col_index, row_index), colors.green)
 
-    # Mettre à jour le style
+    # Update the table style
     table.setStyle(table_style)
 
     # Add the table to the elements list
     elements.append(table)
+
+    # Add a page break to move to a new page
+    elements.append(PageBreak())
 
     # Set the file path
     output_dir = resource_path('output')
@@ -128,11 +132,34 @@ def export_to_pdf(table_data, output_path):
 
     # Resize and add the final image
     final_image = Image.open(final_image_path)
-    max_width, max_height = letter
+    max_width, max_height = letter[0] - 100, letter[1] - 200  # Adjusting size to fit within the page with margins
     if final_image.width > max_width or final_image.height > max_height:
         final_image.thumbnail((max_width, max_height))
 
-    elements.append(ReportLabImage(final_image_path, width=final_image.width, height=final_image.height))
+    # Center the image
+    centered_image = ReportLabImage(final_image_path, width=final_image.width, height=final_image.height)
+
+    # Create legend with smaller font size
+    snpxplex_paragraph = Paragraph("SNPXplex", getSampleStyleSheet()['BodyText'])
+
+    # Create a table for the legend and the image
+    legends_and_image_table = Table(
+        [
+            ['', snpxplex_paragraph, ''],
+            ['', centered_image, '']
+        ],
+        colWidths=[1.5 * inch, final_image.width, 1.5 * inch],
+        rowHeights=[0.5 * inch, final_image.height]
+    )
+
+    legends_and_image_table.setStyle(TableStyle([
+        ('SPAN', (1, 0), (1, 0)),  # Span top legend across the image column
+        ('ALIGN', (1, 0), (1, 0), 'CENTER'),  # Center the top legend
+        ('VALIGN', (1, 0), (1, 0), 'MIDDLE'),  # Middle vertical align for the top legend
+    ]))
+
+    # Add the table with legend and image to the elements list
+    elements.append(legends_and_image_table)
 
     # Build the PDF
     doc.build(elements)
@@ -142,6 +169,7 @@ def export_pdf():
                                              filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")])
     if pdf_path:
         export_to_pdf(main.merge_output_df, pdf_path)
+
 
 # Function to update the canvas image
 def update_canvas_image(image_path):
@@ -167,6 +195,7 @@ def update_canvas_image(image_path):
     # After updating canvas image, display the combobox
     afficherTableau.display_combobox_after_image(left_frame)
 
+
 # Function to execute the main function
 def execute_main():
     global file_path1, file_path2, df_unique
@@ -176,6 +205,7 @@ def execute_main():
         update_canvas_image("tableau_final.png")
     else:
         print("Veuillez sélectionner les fichiers SNPx et MergeSNP.")
+
 
 # Function to select file
 def select_file(file_number):
