@@ -145,16 +145,14 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     # Add legends and title with responsive styles
     styled_html = (
         f'<html><head><style>'
-        f'body {{margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; flex-direction: column;}} '
-        f'table {{width: 70%}} '
-        f'td, th {{text-align: center}} '
-        f'h2, h3 {{ text-align: center; width: 100%;}} '
+        f'body {{margin: 0; padding: 0; justify-content: center; align-items: center;  display: flex; flex-direction: column;}} '
+        f'table {{width: 80%;}} '
+        f'td, th {{text-align: center; padding: 5px;}} '
+        f'h2, h3 {{ text-align: center; width: 100%; margin: 0;}} '
         f'</style></head>'
         f'<body>'
         f'<table>'
-        f'<tr><td colspan="{len(result_df.columns) + 1}"><h3>SNPxPlex</h3></td></tr>'
         f'{styled_df.to_html(index=False)}'
-        f'<tr><td colspan="{len(result_df.columns) + 1}"><h3>NGS</h3></td></tr>'
         f'</table>'
         f'</body></html>'
     )

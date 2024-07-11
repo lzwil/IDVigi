@@ -139,23 +139,21 @@ def export_to_pdf(table_data, output_path):
     # Center the image
     centered_image = ReportLabImage(final_image_path, width=final_image.width, height=final_image.height)
 
-    # Create legend with smaller font size
-    snpxplex_paragraph = Paragraph("SNPXplex", getSampleStyleSheet()['BodyText'])
-
     # Create a table for the legend and the image
     legends_and_image_table = Table(
         [
-            ['', snpxplex_paragraph, ''],
-            ['', centered_image, '']
+            [Paragraph("SNPXplex", getSampleStyleSheet()['BodyText'])],
+            [centered_image]
         ],
-        colWidths=[1.5 * inch, final_image.width, 1.5 * inch],
-        rowHeights=[0.5 * inch, final_image.height]
+        colWidths=[final_image.width],
+        rowHeights=[20, final_image.height]  # Adjusted height for legend row
     )
 
     legends_and_image_table.setStyle(TableStyle([
-        ('SPAN', (1, 0), (1, 0)),  # Span top legend across the image column
-        ('ALIGN', (1, 0), (1, 0), 'CENTER'),  # Center the top legend
-        ('VALIGN', (1, 0), (1, 0), 'MIDDLE'),  # Middle vertical align for the top legend
+        ('ALIGN', (0, 0), (0, 0), 'CENTER'),  # Center the legend
+        ('VALIGN', (0, 0), (0, 0), 'TOP'),  # Align the legend to the top
+        ('ALIGN', (0, 1), (0, 1), 'CENTER'),  # Center the image
+        ('VALIGN', (0, 1), (0, 1), 'MIDDLE'),  # Middle vertical align for the image
     ]))
 
     # Add the table with legend and image to the elements list
