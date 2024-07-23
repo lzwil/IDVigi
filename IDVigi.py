@@ -142,7 +142,7 @@ def export_to_pdf(table_data, output_path):
     # Create a table for the legend and the image
     legends_and_image_table = Table(
         [
-            [Paragraph("SNPXplex", getSampleStyleSheet()['BodyText'])],
+            [Paragraph("", getSampleStyleSheet()['BodyText'])],
             [centered_image]
         ],
         colWidths=[final_image.width],
@@ -150,10 +150,10 @@ def export_to_pdf(table_data, output_path):
     )
 
     legends_and_image_table.setStyle(TableStyle([
-        ('ALIGN', (0, 0), (0, 0), 'CENTER'),  # Center the legend
+        ('ALIGN', (0, 0), (0, 0), 'CENTER'),  # Center the legend horizontally
         ('VALIGN', (0, 0), (0, 0), 'TOP'),  # Align the legend to the top
-        ('ALIGN', (0, 1), (0, 1), 'CENTER'),  # Center the image
-        ('VALIGN', (0, 1), (0, 1), 'MIDDLE'),  # Middle vertical align for the image
+        ('ALIGN', (0, 1), (0, 1), 'CENTER'),  # Center the image horizontally
+        ('VALIGN', (0, 1), (0, 1), 'MIDDLE'),  # Center the image vertically
     ]))
 
     # Add the table with legend and image to the elements list
