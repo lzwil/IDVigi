@@ -58,7 +58,7 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
 
 
     #Ordonner les nouveaux tableaux par sample et par rs
-    mergeSnpTrimmed.sort_values(['Sample', 'Variant'], inplace=True, ignore_index=True)
+    mergeSnpTrimmed.sort_values(['Sample', 'Variant'], inplace=True)
     snpxTrimmed.sort_values(['Sample', 'Variant'], inplace=True, ignore_index=True)
 
     # Grouper les variants par sample dans chaque table
@@ -167,9 +167,14 @@ def creerCarteIdVigi(chemSNPx,chemMergeSNP, cutoff):
     with open(html_file_path, 'w') as f:
         f.write(styled_html)
 
+
     # Take screenshot of HTML and save as image
     hti_instance = hti(output_path=resource_path('output'))  # Specify the output directory
+    hti_instance.browser.use_new_headless = None
+    hti_instance.browser.print_command = True  # prints the command line used to perform the screenshot
     hti_instance.screenshot(html_file=html_file_path, save_as='tableau_final.png')
+
+
 
 def get_unique_variants_for_sample(sample_name1, sample_name2, snpxGrouped, mergeSnpGrouped):
 
