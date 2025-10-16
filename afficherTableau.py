@@ -6,8 +6,8 @@ import main
 def display_combobox_after_image(left_frame):
 
     # Create a label for the dropdown list
-    sample_label = Label(left_frame, text="Sélectionner les échantillons:")
-    sample_label.grid(row=0, column=0, sticky=W, padx=50, pady=(0, 220))
+    sample_label = Label(left_frame, text="Discordances entre deux échantillons:")
+    sample_label.grid(row=0, column=0, sticky=W, padx=20, pady=(0, 220))
     samples = main.samples.values.tolist()
 
     # Create the first combobox

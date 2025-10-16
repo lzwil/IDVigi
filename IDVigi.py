@@ -35,26 +35,33 @@ def export_to_pdf(table_data, output_path):
     logo_image = Image.open(logo_path)
 
     # Resize the logo if needed
-    max_width = 150  # Adjust as needed
-    max_height = 150  # Adjust as needed
+    max_width = 150
+    max_height = 150
     if logo_image.width > max_width or logo_image.height > max_height:
         logo_image.thumbnail((max_width, max_height))
 
-    # Create a ReportLabImage object for the logo
     logo_reportlab_image = ReportLabImage(logo_path, width=logo_image.width, height=logo_image.height)
 
-    # Set up the PDF document
     doc = SimpleDocTemplate(output_path, pagesize=letter)
     elements = []
 
-    # Title
-    title_text = "Concordance entre SNPxPlex et le résultat de NGS"
-    title_style = getSampleStyleSheet()['Title']
-    title_paragraph = Paragraph(title_text, title_style)
+    # Paragraphs séparés pour le titre et le sous-titre
+    title_paragraph = Paragraph(
+        "Validation technique de l'identitovigilance",
+        getSampleStyleSheet()['Title']
+    )
+    title_paragraph.style.alignment = 1  # centrer
 
-    # Create a table to position the logo and title side by side
+    subtitle_paragraph = Paragraph(
+        "Comparaison entre SNPxPlex et le résultat de NGS",
+        getSampleStyleSheet()['BodyText']
+    )
+    subtitle_paragraph.style.fontSize = 12  # taille un peu plus petite
+    subtitle_paragraph.style.alignment = 1  # centrer
+
+    # Inclure les deux Paragraphs dans le header avec le logo
     header_table = Table(
-        [[logo_reportlab_image, title_paragraph]],
+        [[logo_reportlab_image, [title_paragraph, subtitle_paragraph]]],
         colWidths=[logo_image.width + 10, doc.width - logo_image.width - 20]
     )
     header_table.setStyle(TableStyle([
@@ -64,102 +71,70 @@ def export_to_pdf(table_data, output_path):
         ('TOPPADDING', (0, 0), (0, 0), 0),
         ('BOTTOMPADDING', (0, 0), (0, 0), 0),
     ]))
-
-    # Add the header table to the elements list
     elements.append(header_table)
-
-    # Add a spacer after the header table
-    elements.append(Spacer(1, 25))  # Adjust the height as needed
+    elements.append(Spacer(1, 25))
 
     # Date
     locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
     date_text = datetime.now().strftime("%d %B %Y")
-    date_style = getSampleStyleSheet()['Normal']
-    date_paragraph = Paragraph(f"Date: {date_text}", date_style)
-
-    # Add the date to the elements list
+    date_paragraph = Paragraph(f"Date: {date_text}", getSampleStyleSheet()['Normal'])
     elements.append(date_paragraph)
     elements.append(Spacer(1, 12))
 
-    # Sentence
     phrase_text = f"Validation des échantillons du run <b>{main.nom_run}</b> sur <b>{cutoff}</b> SNPs"
-    phrase_style = getSampleStyleSheet()['Normal']
-    phrase_paragraph = Paragraph(phrase_text, phrase_style)
-
-    # Add the sentence to the elements list
+    phrase_paragraph = Paragraph(phrase_text, getSampleStyleSheet()['Normal'])
     elements.append(phrase_paragraph)
     elements.append(Spacer(1, 25))
 
-    # Convert DataFrame to a list of lists for the table
+    # Table
     table_data_list = [list(table_data.columns)] + [list(row) for row in table_data.itertuples(index=False)]
-
-    # Create the table
     table = Table(table_data_list, colWidths=[2 * inch] * len(table_data_list[0]))
-
-    # Style the table
     table_style = TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Header row
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Header text color
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Header font
-        ('FONTSIZE', (0, 0), (-1, 0), 12),  # Header font size
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),  # Header padding
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),  # Data rows
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
         ('GRID', (0, 0), (-1, -1), 1, colors.black),
     ])
     table.setStyle(table_style)
 
-    # Conditional styling based on cutoff
     for row_index, row in enumerate(table_data_list[1:], start=1):
         for col_index, cell in enumerate(row):
             if col_index == 1:
                 if int(cell) >= cutoff:
                     table_style.add('BACKGROUND', (col_index, row_index), (col_index, row_index), colors.green)
-
-    # Update the table style
+                if int(cell) < cutoff:
+                    table_style.add('BACKGROUND', (col_index, row_index), (col_index, row_index), colors.firebrick)
     table.setStyle(table_style)
-
-    # Add the table to the elements list
     elements.append(table)
-
-    # Add a page break to move to a new page
     elements.append(PageBreak())
 
-    # Set the file path
+    # Image finale
     output_dir = resource_path('output')
     final_image_path = os.path.join(output_dir, "tableau_final.png")
-
-    # Resize and add the final image
     final_image = Image.open(final_image_path)
-    max_width, max_height = letter[0] - 100, letter[1] - 200  # Adjusting size to fit within the page with margins
+    max_width, max_height = letter[0] - 100, letter[1] - 200
     if final_image.width > max_width or final_image.height > max_height:
         final_image.thumbnail((max_width, max_height))
-
-    # Center the image
     centered_image = ReportLabImage(final_image_path, width=final_image.width, height=final_image.height)
 
-    # Create a table for the legend and the image
     legends_and_image_table = Table(
-        [
-            [Paragraph("", getSampleStyleSheet()['BodyText'])],
-            [centered_image]
-        ],
+        [[Paragraph("", getSampleStyleSheet()['BodyText'])], [centered_image]],
         colWidths=[final_image.width],
-        rowHeights=[20, final_image.height]  # Adjusted height for legend row
+        rowHeights=[20, final_image.height]
     )
-
     legends_and_image_table.setStyle(TableStyle([
-        ('ALIGN', (0, 0), (0, 0), 'CENTER'),  # Center the legend horizontally
-        ('VALIGN', (0, 0), (0, 0), 'TOP'),  # Align the legend to the top
-        ('ALIGN', (0, 1), (0, 1), 'CENTER'),  # Center the image horizontally
-        ('VALIGN', (0, 1), (0, 1), 'MIDDLE'),  # Center the image vertically
+        ('ALIGN', (0, 0), (0, 0), 'CENTER'),
+        ('VALIGN', (0, 0), (0, 0), 'TOP'),
+        ('ALIGN', (0, 1), (0, 1), 'CENTER'),
+        ('VALIGN', (0, 1), (0, 1), 'MIDDLE'),
     ]))
-
-    # Add the table with legend and image to the elements list
     elements.append(legends_and_image_table)
 
-    # Build the PDF
     doc.build(elements)
 
 def export_pdf():
@@ -168,33 +143,41 @@ def export_pdf():
     if pdf_path:
         export_to_pdf(main.merge_output_df, pdf_path)
 
-
-# Function to update the canvas image
+# Function to update the canvas image with scrollbars
 def update_canvas_image(image_path):
-    # Load the new image
     output_dir = resource_path('output')
     new_image_path = os.path.join(output_dir, image_path)
     new_image = Image.open(new_image_path)
-    # Resize the image to fit within the canvas size while preserving aspect ratio
-    max_width = 1300
-    max_height = 1300
-    new_image.thumbnail((max_width, max_height), Image.Resampling.BICUBIC)
 
-    tk_image = ImageTk.PhotoImage(new_image)
+    # Get canvas size
+    canvas_width = canvas.winfo_width()
+    canvas_height = canvas.winfo_height()
 
-    # Update the canvas size to match the image size
-    canvas.config(width=tk_image.width(), height=tk_image.height())
+    if canvas_width == 1 and canvas_height == 1:
+        # Canvas not yet rendered, force update
+        window.update_idletasks()
+        canvas_width = canvas.winfo_width()
+        canvas_height = canvas.winfo_height()
 
-    # Update the canvas image
+    # Scale image proportionally to fit canvas
+    scale = min(canvas_width / new_image.width, canvas_height / new_image.height, 1.0)
+    new_width = int(new_image.width * scale)
+    new_height = int(new_image.height * scale)
+
+    resized_image = new_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+    tk_image = ImageTk.PhotoImage(resized_image)
+
     canvas.delete("all")
     canvas.create_image(0, 0, anchor=NW, image=tk_image)
-    canvas.image = tk_image  # Keep reference to avoid garbage collection
+    canvas.image = tk_image  # keep reference
 
-    # After updating canvas image, display the combobox
+    # Update scroll region (for panning if image is larger)
+    canvas.config(scrollregion=(0, 0, new_width, new_height))
+
+    # Show comboboxes after image
     afficherTableau.display_combobox_after_image(left_frame)
 
 
-# Function to execute the main function
 def execute_main():
     global file_path1, file_path2, df_unique
     if file_path1 and file_path2:
@@ -204,8 +187,6 @@ def execute_main():
     else:
         print("Veuillez sélectionner les fichiers SNPx et MergeSNP.")
 
-
-# Function to select file
 def select_file(file_number):
     global file_path1, file_path2
     if file_number == 1:
@@ -221,20 +202,17 @@ def select_file(file_number):
                                    bg="#bfc2c7", fg="white")
             cheminFichier2.grid(row=3, column=0, sticky=W, padx=(0, 0), pady=(10, 0))
 
-# Create the window
+# Window
 window = Tk()
 window.title("IDVigi | Générateur de matrice de concordance")
 window.geometry("1920x1200")
 window.config(background="#bfc2c7")
-
-# Setting logo image
 window.iconbitmap(resource_path("Images/logo.ico"))
 
-# Create the frame
 frame = Frame(window, bg="#bfc2c7")
 frame.pack(fill=BOTH, expand=YES)
 
-# Load the image
+# Logo (à gauche par défaut)
 logo_image = Image.open(resource_path("Images/logo.png"))
 width, height = logo_image.size
 max_width, max_height = 600, 600
@@ -244,43 +222,45 @@ new_height = int(height * scale)
 resized_logo = logo_image.resize((new_width, new_height), resample=Image.Resampling.LANCZOS)
 tk_logo = ImageTk.PhotoImage(resized_logo)
 
-# Create canvas and display image
-canvas = Canvas(frame, width=1200, height=600, bg="#bfc2c7", bd=0, highlightthickness=0)
-canvas.create_image(300, 60, anchor=NW, image=tk_logo)
-canvas.pack(side=RIGHT, fill=BOTH, expand=YES, padx=(20, 10), pady=(20, 10))
+# Canvas + scrollbars
+canvas = Canvas(frame, bg="#bfc2c7", bd=0, highlightthickness=0)
+scroll_x = Scrollbar(frame, orient="horizontal", command=canvas.xview)
+scroll_y = Scrollbar(frame, orient="vertical", command=canvas.yview)
+canvas.configure(xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
-# Create sub-frame for labels and buttons
+canvas.pack(side=RIGHT, fill=BOTH, expand=YES, padx=(20, 10), pady=(20, 10))
+scroll_x.pack(side=BOTTOM, fill=X)
+scroll_y.pack(side=RIGHT, fill=Y)
+
+# Affiche logo par défaut
+canvas.create_image(300, 60, anchor=NW, image=tk_logo)
+
+# Left frame
 left_frame = Frame(frame, bg="#bfc2c7")
 left_frame.pack(side=LEFT, fill=Y)
 
-# Label
-label1 = Label(left_frame, text="Fichier SNPx:", font=("Montserrat", 14), bg="#bfc2c7", fg="white")
-label1.grid(row=0, column=0, sticky=W, padx=0, pady=(300, 0))  # Adjusted padding
-label2 = Label(left_frame, text="Fichier MergeSNP:", font=("Montserrat", 14), bg="#bfc2c7", fg="white")
-label2.grid(row=2, column=0, sticky=W, padx=0, pady=(10, 0))  # Adjusted padding
+label1 = Label(left_frame, text="Fichier SNPxPlex:", font=("Montserrat", 14), bg="#bfc2c7", fg="white")
+label1.grid(row=0, column=0, sticky=W, padx=0, pady=(300, 0))
+label2 = Label(left_frame, text="Fichier NGS:", font=("Montserrat", 14), bg="#bfc2c7", fg="white")
+label2.grid(row=2, column=0, sticky=W, padx=0, pady=(10, 0))
 
-# Button to select file
-select_button1 = Button(left_frame, text="Sélectionner fichier SNPx", command=lambda: select_file(1),
+select_button1 = Button(left_frame, text="Sélectionner fichier SNPxPlex", command=lambda: select_file(1),
                         bg="#4CAF50", fg="white")
 select_button1.grid(row=0, column=0, sticky=W, padx=170, pady=(300, 0))
-select_button2 = Button(left_frame, text="Sélectionner fichier MergeSNP", command=lambda: select_file(2),
+select_button2 = Button(left_frame, text="Sélectionner fichier NGS", command=lambda: select_file(2),
                         bg="#4CAF50", fg="white")
 select_button2.grid(row=2, column=0, sticky=W, padx=170, pady=(12, 0))
 
-# Label cutoff (Validation threshold)
 label2 = Label(left_frame, text="Seuil de validation:", font=("Montserrat", 14), bg="#bfc2c7", fg="white")
-label2.grid(row=4, column=0, sticky=W, padx=0, pady=(10, 0))  # Adjusted padding
+label2.grid(row=4, column=0, sticky=W, padx=0, pady=(10, 0))
 
-# Button to select the cutoff
 cutoff_combobox = ttk.Combobox(left_frame, values=list(range(16)), state="readonly", width=4)
 cutoff_combobox.set(13)
 cutoff_combobox.grid(row=4, column=0, sticky=W, padx=170, pady=(12, 0))
 
-# Button to execute the comparison by calling the main function
 execute_button = Button(left_frame, text="Comparer", command=execute_main, bg="#008CBA", fg="white")
 execute_button.grid(row=5, column=0, sticky=W, padx=170, pady=(8, 0))
 
-# Add menu
 menu_bar = Menu(window)
 file_menu = Menu(menu_bar, tearoff=0)
 file_menu.add_command(label="Quitter", command=window.quit)
