@@ -149,7 +149,7 @@ def creerCarteIdVigi(chemSNPx, chemMergeSNP, cutoff):
         f.write(styled_html)
 
     # Screenshot
-    hti_instance = hti(output_path=output_dir)
+    hti_instance = hti(output_path=output_dir, browser_executable="C:/Program Files/Google/Chrome/Application/chrome.exe")
     hti_instance.browser.use_new_headless = None
     hti_instance.browser.print_command = True
     hti_instance.screenshot(html_file=html_file_path, save_as='tableau_final.png', size=(3000, 3000))
